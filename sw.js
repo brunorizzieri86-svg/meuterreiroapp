@@ -1,8 +1,8 @@
-const CACHE='meuterreiro-v040';
+const CACHE='meuterreiro-v041';
 const ASSETS=[
   './','./index.html','./manifest.json',
   './assets/logo-meu-terreiro.png',
-  './icons/icon-180.png','./icons/icon-192.png','./icons/icon-512.png','./icons/icon-maskable-512.png'
+  './icons/icon-180.png','./icons/icon-192.png','./icons/icon-512.png','./icons/icon-maskable-512.png','./icons/favicon-64.png','./assets/app-icon-meu-terreiro.png'
 ];
 self.addEventListener('install',e=>{
   self.skipWaiting();

@@ -1,9 +1,9 @@
-# MEU TERREIRO — CHANGELOG V0.4.0
+# MEU TERREIRO — CHANGELOG V0.4.1
 
-- Teste gratuito de 30 dias por aparelho.
-- Plano PRO com ativação offline por código vinculado ao ID AP-XXXX.
-- Planos de 1, 6 e 12 meses.
-- Código de uso único; renovação exige nova sequência/código.
-- Licença não é transferida por backup/restauração.
-- Após o teste, Home, Mais, Configurações e Backup continuam acessíveis para ativação/proteção; módulos operacionais exigem PRO.
-- Gerador de códigos criado separadamente e fora do ZIP público do app.
+- Ícone oficial de instalação atualizado.
+- O ícone agora usa a arte aprovada: atabaque + cachimbo + guia, sem textos.
+- Criadas versões 180x180, 192x192 e 512x512.
+- Criada versão `maskable` com margem segura para Android, evitando cortes em ícones adaptativos.
+- Atualizado `apple-touch-icon` para atalhos no iPhone/iPad.
+- Adicionado favicon para navegador.
+- Service Worker atualizado para forçar a atualização dos recursos de ícone.
