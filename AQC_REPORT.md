@@ -1,10 +1,9 @@
-# AQC — MEU TERREIRO V0.3.8
+# AQC — MEU TERREIRO V0.4.0
 
-## Verificações
-- Tela de login sem logo sobre a imagem.
-- Tela de primeiro acesso sem logo sobre a imagem.
-- Frase principal preservada e reposicionada.
-- Formulários de login/cadastro preservados.
-- Cabeçalho interno do app preservado.
-- Rodapé dos PDFs preservado.
-- ZIP validado.
+- 30 dias grátis configurados.
+- ID AP-XXXX persistente por aparelho.
+- Validação offline de código vinculada ao aparelho.
+- Códigos usados são bloqueados contra reutilização.
+- Renovação soma meses a um PRO ainda ativo.
+- Licença local é preservada ao restaurar backup.
+- Gerador permanece fora do pacote público.

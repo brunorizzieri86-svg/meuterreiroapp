@@ -1,11 +1,9 @@
-# MEU TERREIRO — CHANGELOG V0.3.8
+# MEU TERREIRO — CHANGELOG V0.4.0
 
-- Removido completamente o logo da área visual das telas de:
-  - primeiro acesso
-  - login
-- Mantida a composição inspirada no Trail Life:
-  - frase pequena de abertura
-  - frase principal sobre Umbanda em grande destaque
-  - texto de apoio abaixo
-- Cabeçalho interno do aplicativo permanece inalterado.
-- Assinatura visual dos PDFs permanece somente no rodapé.
+- Teste gratuito de 30 dias por aparelho.
+- Plano PRO com ativação offline por código vinculado ao ID AP-XXXX.
+- Planos de 1, 6 e 12 meses.
+- Código de uso único; renovação exige nova sequência/código.
+- Licença não é transferida por backup/restauração.
+- Após o teste, Home, Mais, Configurações e Backup continuam acessíveis para ativação/proteção; módulos operacionais exigem PRO.
+- Gerador de códigos criado separadamente e fora do ZIP público do app.
