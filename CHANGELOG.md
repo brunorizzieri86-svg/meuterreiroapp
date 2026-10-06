@@ -1,9 +1,6 @@
-# MEU TERREIRO — CHANGELOG V0.4.1
+# MEU TERREIRO — CHANGELOG V0.4.2
 
-- Ícone oficial de instalação atualizado.
-- O ícone agora usa a arte aprovada: atabaque + cachimbo + guia, sem textos.
-- Criadas versões 180x180, 192x192 e 512x512.
-- Criada versão `maskable` com margem segura para Android, evitando cortes em ícones adaptativos.
-- Atualizado `apple-touch-icon` para atalhos no iPhone/iPad.
-- Adicionado favicon para navegador.
-- Service Worker atualizado para forçar a atualização dos recursos de ícone.
+- WhatsApp para solicitação de código PRO: **(11) 95352-5141**.
+- Botão **Solicitar código pelo WhatsApp** com mensagem automática contendo plano, valor e ID AP-XXXX.
+- Tabela comercial: 30 dias PROMO R$ 79,90; 6 meses R$ 399,90; 12 meses R$ 699,90.
+- Cards de planos selecionáveis com destaque visual.

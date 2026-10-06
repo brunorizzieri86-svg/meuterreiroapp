@@ -1,10 +1,8 @@
-# MEU TERREIRO — V0.4.0
-
-## 30 dias grátis
-O teste começa no primeiro acesso criado. Usuários já cadastrados que ainda não possuam licença recebem 30 dias a partir da primeira abertura desta versão.
+# MEU TERREIRO — V0.4.2
 
 ## Plano PRO
-Em **Mais → Plano & Licença**, o app mostra o ID AP-XXXX do aparelho e aceita códigos PRO de 1, 6 ou 12 meses.
+- 30 dias — **PROMO R$ 79,90**
+- 6 meses — **R$ 399,90**
+- 12 meses — **R$ 699,90**
 
-## Gerador
-O gerador PRO é um arquivo separado para uso do desenvolvedor. Não publique o gerador junto com o app.
+WhatsApp para solicitar código: **(11) 95352-5141**.
