@@ -1,50 +1,48 @@
-# AQC — MEU TERREIRO V0.4.6.4 · ESTABILIZAÇÃO
+# AQC — MEU TERREIRO V0.4.8.4
 
 ## Score automatizado: 100%
-## Sintaxe JavaScript: ✅ OK
-## Testes funcionais de valores/data: ✅ OK
+## JavaScript: ✅ OK
+## Teste de segurança do WhatsApp DEMO: ✅ OK
 
-## Testes executados
-- ✅ Versão V0.4.6.4
-- ✅ money converte centavos para reais
-- ✅ todayISO usa data local
-- ✅ Marca lateral MEU TERREIRO
-- ✅ Marca visível CASA DE AXÉ removida
-- ✅ Busca com debounce
-- ✅ Busca Financeiro preserva foco
-- ✅ Busca Mensalidades preserva foco
-- ✅ Busca Estoque preserva foco
-- ✅ Busca Fornecedores preserva foco
-- ✅ Busca Documentos preserva foco
-- ✅ Busca Eventos preserva foco
-- ✅ Busca Filhos preserva foco
-- ✅ Imagens internas preservadas
-- ✅ todayHero/Hoje preservado
-- ✅ PDF custom footer preservado
-- ✅ Cotações preservadas
-- ✅ Plano PRO preservado
-- ✅ Cache atualizado
+## Verificações
+- ✅ version
+- ✅ legal_version
+- ✅ terms_doc
+- ✅ privacy_doc
+- ✅ first_access_checkbox
+- ✅ first_access_whatsapp
+- ✅ legal_accept_validation
+- ✅ legal_accept_timestamp
+- ✅ legal_settings_row
+- ✅ demo_safe_router
+- ✅ demo_contacts_overridden
+- ✅ monthly_template
+- ✅ event_template
+- ✅ supplier_template
+- ✅ restock_template
+- ✅ quotation_template
+- ✅ purchase_template
+- ✅ generic_member_template
+- ✅ message_variables
+- ✅ pdf_premium
+- ✅ pdf_footer_preserved
+- ✅ funds_clean
+- ✅ restock_clean
+- ✅ quotation_clean
+- ✅ order_clean
+- ✅ existing_date_filters
+- ✅ tutorial_preserved
+- ✅ pro_preserved
+- ✅ money_preserved
+- ✅ images_preserved
+- ✅ cache
 
-## Casos monetários validados
-- ✅ `150,00` → 15000 centavos → `R$ 150,00`
-- ✅ `1.250,50` → 125050 centavos → `R$ 1.250,50`
-- ✅ Nenhuma migração destrutiva dos valores existentes
-
-## Datas
-- ✅ Função base usa ano/mês/dia locais do dispositivo, e não `toISOString()` UTC.
-- ✅ Caso noturno local validado em teste unitário.
-
-## Buscas
-- ✅ Renderização das buscas desacoplada da digitação imediata.
-- ✅ Reposição programática de foco e cursor após atualização.
+## Observações jurídicas
+- Os Termos e a Política foram implementados como base operacional do produto.
+- Antes da comercialização em escala, recomenda-se revisão por profissional jurídico, especialmente por envolver dados pessoais sensíveis relacionados a religião.
 
 ## Integridade
-- Arquivos ausentes em relação à V0.4.6.3: 0
-- Imagens embutidas antes/depois: 8/8
-- Gerador PRO não alterado.
-- Estrutura de dados não migrada de forma destrutiva.
-
-## Validação manual recomendada no aparelho
-- Criar uma despesa de R$ 150,00 e confirmar tela + PDF.
-- Abrir o app após 21h e confirmar a data do dia.
-- Digitar uma palavra inteira nas buscas sem o teclado/foco sumir.
+- Arquivos ausentes em relação à V0.4.8.3: 0
+- Nenhuma imagem interna removida.
+- Plano PRO e gerador preservados.
+- Item 6 ainda não iniciado.

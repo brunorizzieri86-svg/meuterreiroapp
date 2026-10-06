@@ -1,42 +1,47 @@
-# MEU TERREIRO — V0.4.6.4 · ESTABILIZAÇÃO
+# MEU TERREIRO — V0.4.8.4
 
-## Financeiro — correção monetária crítica
-- O app já armazenava valores corretamente em centavos.
-- Corrigida a função de exibição `money()`.
-- Exemplo validado:
-  - digitado: `150,00`
-  - armazenado: `15000` centavos
-  - exibido agora: `R$ 150,00`
-- A correção alcança telas e relatórios que usam a função monetária central.
-- Nenhum lançamento existente é multiplicado, dividido ou migrado no banco.
+## Segurança do Modo Demonstração
+- WhatsApp do DEMO não usa mais números aleatórios como destino.
+- O destino de qualquer teste no DEMO é exclusivamente:
+  1. WhatsApp do administrador cadastrado no primeiro acesso;
+  2. como fallback, WhatsApp cadastrado nos Dados da Casa.
+- Sem número seguro cadastrado, o WhatsApp do DEMO é bloqueado.
+- Contatos fictícios de membros e fornecedores recebem internamente o mesmo número seguro durante o DEMO.
 
-## Datas
-- `todayISO()` deixou de depender de UTC.
-- A data atual passa a ser calculada pelo calendário local do aparelho.
-- Evita avanço indevido de data no período noturno do Brasil.
+## Termos de Uso e Política de Privacidade
+- Checkbox obrigatório no primeiro cadastro.
+- Links para leitura integral antes do aceite.
+- Registro local de data/hora, versão dos Termos e versão da Política.
+- WhatsApp do administrador incluído no primeiro cadastro para testes seguros do DEMO.
+- Termos e Política acessíveis novamente em Configurações.
+- Conteúdo aborda armazenamento local, backups, dados religiosos/sensíveis, WhatsApp externo, licenciamento, exclusão e responsabilidades.
 
-## Marca
-- Corrigido o texto legado `CASA DE AXÉ` visível na barra lateral.
-- Agora exibe `MEU TERREIRO`.
-- Nomes técnicos internos do banco não foram renomeados para não arriscar compatibilidade de dados.
+## WhatsApp
+- Mensalidade pendente reescrita.
+- Lembrete de evento reescrito.
+- Escala reescrita.
+- Agradecimento reescrito.
+- Contato geral com membro reescrito.
+- Solicitação inicial a fornecedor reescrita.
+- Lista de reposição reescrita.
+- Cotação reescrita.
+- Confirmação de pedido reescrita.
+- Variável `{casa}` adicionada às mensagens programadas.
 
-## Buscas
-- Corrigida perda de foco durante digitação.
-- Aplicado a:
-  - Filhos da Casa
-  - Financeiro
-  - Mensalidades
-  - Estoque
-  - Fornecedores
-  - Documentos
-  - Eventos/Agenda
-- Adicionado debounce curto de 90 ms para reduzir renderizações desnecessárias.
-- Campo recebe o foco e posição do cursor novamente após a atualização da lista.
+## Visual
+- Fundos Financeiros reorganizado em resumo compacto + lista.
+- Lista de reposição reorganizada por fornecedor.
+- Nova Cotação com checkboxes menores e fornecedores em cartões compactos.
+- Comparativo de Cotação reorganizado.
+- Pedido reorganizado com resumo, progresso e itens.
 
-## Preservado
-- Todas as imagens internas.
-- Home/Hoje.
-- Estoque & Compras.
-- Cotações.
-- PDFs e dados extras da Casa.
-- Plano PRO, 30 dias grátis e gerador de códigos.
+## PDFs
+- Tipografia editorial.
+- Cabeçalho mais leve com identidade da Casa.
+- Linha verde/dourada discreta.
+- Tabelas suaves, sem aparência industrial.
+- KPIs mais elegantes.
+- Rodapé preserva texto extra da Casa + assinatura MEU TERREIRO APP.
+
+## Item 6
+- Ainda não iniciado.
