@@ -1,55 +1,50 @@
-# AQC — MEU TERREIRO V0.4.3
+# AQC — MEU TERREIRO V0.4.6.4 · ESTABILIZAÇÃO
 
-**Pontuação automatizada: 100.0% (29/29 verificações aprovadas)**
+## Score automatizado: 100%
+## Sintaxe JavaScript: ✅ OK
+## Testes funcionais de valores/data: ✅ OK
 
-## Escopo auditado
-- ✅ Pacote base completo
-- ✅ Manifest PWA
-- ✅ Service worker versão nova
-- ✅ Plano no menu desktop
-- ✅ Rota Plano registrada
-- ✅ Render da tela Plano
-- ✅ Roteador abre Plano
-- ✅ Plano também no Mais
-- ✅ Plano também em Configurações
-- ✅ Teste grátis 30 dias
-- ✅ Início do trial no cadastro
-- ✅ Avisos pré-vencimento
-- ✅ Modo Restrito
-- ✅ Guarda de render para rota bloqueada
-- ✅ Guarda de clique expiração
-- ✅ Backup permitido no restrito
-- ✅ Configuração/assinatura acessíveis
-- ✅ Licença preservada na restauração
-- ✅ WhatsApp correto
-- ✅ Preço 30 dias
-- ✅ Preço 6 meses
-- ✅ Preço 12 meses
-- ✅ WhatsApp envia ID do aparelho
-- ✅ Ativação instantânea página
-- ✅ Gerador separado
-- ✅ Mesmo segredo app/gerador
-- ✅ Mesmo prefixo/formato
-- ✅ Planos gerador alinhados
-- ✅ 27 validações gerador ↔ app — 27/27
+## Testes executados
+- ✅ Versão V0.4.6.4
+- ✅ money converte centavos para reais
+- ✅ todayISO usa data local
+- ✅ Marca lateral MEU TERREIRO
+- ✅ Marca visível CASA DE AXÉ removida
+- ✅ Busca com debounce
+- ✅ Busca Financeiro preserva foco
+- ✅ Busca Mensalidades preserva foco
+- ✅ Busca Estoque preserva foco
+- ✅ Busca Fornecedores preserva foco
+- ✅ Busca Documentos preserva foco
+- ✅ Busca Eventos preserva foco
+- ✅ Busca Filhos preserva foco
+- ✅ Imagens internas preservadas
+- ✅ todayHero/Hoje preservado
+- ✅ PDF custom footer preservado
+- ✅ Cotações preservadas
+- ✅ Plano PRO preservado
+- ✅ Cache atualizado
 
-## Testes adicionais
-- ✅ JavaScript do aplicativo validado com `node --check`.
-- ✅ JavaScript do gerador PRO validado com `node --check`.
-- ✅ 27 combinações de códigos (3 aparelhos × 3 planos × 3 sequências) validadas contra o mesmo algoritmo usado no app.
-- ✅ Código de outro aparelho foi rejeitado nas 27 combinações.
+## Casos monetários validados
+- ✅ `150,00` → 15000 centavos → `R$ 150,00`
+- ✅ `1.250,50` → 125050 centavos → `R$ 1.250,50`
+- ✅ Nenhuma migração destrutiva dos valores existentes
 
-## Comportamento validado por inspeção de fluxo
-- O teste grátis é de 30 dias por navegador/aparelho.
-- Após o vencimento, o app entra em Modo Restrito sem apagar a base local.
-- Home, Mais, Backup & Proteção, Plano & Assinatura e Configurações permanecem acessíveis.
-- Os demais módulos e ações operacionais são interceptados pela licença até ativação PRO.
-- A ativação PRO persiste a validade e redesenha a interface imediatamente.
-- Desktop e celular seguem o mesmo fluxo, porém continuam independentes enquanto não houver nuvem/sincronização.
+## Datas
+- ✅ Função base usa ano/mês/dia locais do dispositivo, e não `toISOString()` UTC.
+- ✅ Caso noturno local validado em teste unitário.
 
-## Limitação desta auditoria
-- A automação visual via Chromium foi bloqueada pela política do ambiente de execução. Por isso, a validação desta entrega combina sintaxe, integridade estrutural, inspeção de rotas/ações e testes do algoritmo de licença. O teste final no domínio GitHub Pages continua recomendado após o upload.
+## Buscas
+- ✅ Renderização das buscas desacoplada da digitação imediata.
+- ✅ Reposição programática de foco e cursor após atualização.
 
-## Critério de entrega
-- Meta mínima solicitada: **85%**.
-- Resultado: **100.0% — APROVADO para geração do ZIP.**
+## Integridade
+- Arquivos ausentes em relação à V0.4.6.3: 0
+- Imagens embutidas antes/depois: 8/8
+- Gerador PRO não alterado.
+- Estrutura de dados não migrada de forma destrutiva.
+
+## Validação manual recomendada no aparelho
+- Criar uma despesa de R$ 150,00 e confirmar tela + PDF.
+- Abrir o app após 21h e confirmar a data do dia.
+- Digitar uma palavra inteira nas buscas sem o teclado/foco sumir.
