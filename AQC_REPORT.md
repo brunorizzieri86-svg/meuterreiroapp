@@ -1,48 +1,52 @@
-# AQC — MEU TERREIRO V0.4.9.5
+# AQC — MEU TERREIRO V0.4.9.7
 
 ## Score automatizado: 100%
 ## JavaScript: ✅ sintaxe validada
-## Teste funcional (DOM simulado): ✅ sem erros
-## Teste visual em navegador real (Chromium): ✅ tela de Frequência e chamada, desktop e celular
 
 ## Verificações
-- ✅ version
+- ✅ versao
+- ✅ sintaxe_js
 - ✅ imagens_preservadas
-- ✅ pro_preservado
-- ✅ demo_safe_preservado
-- ✅ termos_preservados
-- ✅ pdf_footer_preservado
-- ✅ chamada_status_4
-- ✅ fazer_chamada_agenda_evento
-- ✅ chamada_marcar_todos_busca_incluir
-- ✅ relatorio_frequencia_pessoa_periodo_tipo
-- ✅ pdf_relatorio_e_chamada
-- ✅ meta_e_regras
-- ✅ tipos_que_contam
-- ✅ alerta_home_faltas_seguidas_meta_pendente
-- ✅ whatsapp_sentimos_falta
-- ✅ controlar_frequencia_mensalista
-- ✅ config_frequencia
-- ✅ mascaras
-- ✅ barra_lateral_rolagem
-- ✅ consulentes_atendimento
-- ✅ layout_desktop_celular
+- ✅ plano_pro_preservado
+- ✅ demo_seguro_whatsapp_preservado
+- ✅ termos_e_privacidade_preservados
+- ✅ rodape_pdf_preservado
+- ✅ layout_desktop_e_celular
+- ✅ filtros_classificacao
+- ✅ filtro_faltas_seguidas
+- ✅ filtro_dentro_da_meta
+- ✅ filtro_presenca_total
+- ✅ filtro_com_faltas_e_atrasos
+- ✅ filtro_sem_registro
+- ✅ ordenacao
+- ✅ periodo_30_dias
+- ✅ destaque_fixado_no_topo
+- ✅ datas_das_faltas
+- ✅ kpis_clicaveis
+- ✅ aviso_inicial_mostra_nomes
+- ✅ aviso_inicial_abre_filtrado
+- ✅ selo_na_aba_frequencia
+- ✅ pdf_respeita_filtros
+- ✅ manual_atualizado
+- ✅ faq_novo
+- ✅ tutorial_atualizado
+- ✅ frequencia
+- ✅ manual
 
 ## Testes executados
-- Chamada: abrir pelo evento, marcar todos presentes, marcar falta/atraso, desfazer com segundo toque, busca, incluir outra pessoa, salvar; a pendência some.
-- Relatório: % por pessoa, faltas seguidas (Carlos: 3 seguidas, 43%), alertas abaixo da meta, por tipo, filtros.
-- Regras: meta alterada para 80%, falta justificada como neutra/presença/falta (cálculo muda: 43% → 38%), validação de meta inválida.
-- Alertas na tela Inicial (chamada pendente, faltas seguidas, abaixo da meta).
-- WhatsApp "Sentimos sua falta" com mensagem acolhedora; consulente fica fora da lista de frequência.
-- PDFs: relatório, lista de chamada e ficha com frequência.
-- Celular 390 px: sem rolagem horizontal; botões de status com 44 px de altura.
+- Cenário com 2 pessoas em faltas seguidas (Beatriz: 4; Carlos: 3) e 1 com presença total: as duas ficam **fixadas no topo**, em destaque vermelho, com nome, selo "N faltas seguidas" e as **datas das faltas**; o destaque permanece no topo mesmo ao trocar a ordenação (Pior/Melhor frequência, Mais faltas, Mais atrasos, Nome).
+- Filtros (Todos, Faltas seguidas, Abaixo da meta, Dentro da meta, Presença total, Com faltas, Com atrasos, Sem registro) com contagem em cada um; filtro vazio mostra aviso e botão "Ver todos"; cartões "Abaixo da meta" e "faltas seguidas" filtram ao tocar.
+- Período "Últimos 30 dias" criado; PDF respeita período, tipo, filtro e ordem e traz a tabela "Atenção".
+- Aviso da tela Inicial: mostra os nomes ("Beatriz de Iansã e Carlos de Ogum") e ao tocar abre Frequência já filtrada em "Faltas seguidas" (período 3 meses); aba "Frequência" ganha selo com a quantidade; abrir a aba normalmente volta para "Todos".
+- Manual (capítulo Frequência, Inicial, FAQ) e tutorial (etapa "Frequência — relatório e alertas") atualizados.
+- Navegador real (Chromium): destaque no desktop e no celular, filtros em pílulas, aviso da Inicial; todas as 14 telas renderizam sem erro.
 
 ## Observações
-- Defina a meta e como a falta justificada conta em Configurações → Frequência; o padrão é 75% e justificada neutra (não entra no cálculo).
-- Compromissos antigos não têm chamada; o relatório começa a valer a partir das chamadas registradas.
-- O WhatsApp abre uma conversa por clique; o app não envia mensagens sozinho.
+- Quem tem faltas seguidas é contado pelo histórico completo de chamadas (não só pelo período escolhido); o período muda os percentuais exibidos.
+- "Faltas seguidas" respeita a regra da falta justificada escolhida em Regras e meta.
 - Faça backup antes de instalar por cima da versão anterior.
 
+
 ## Integridade
-- Nenhuma imagem interna removida. Plano PRO e gerador preservados.
-- Item 6 ainda não iniciado.
+- Imagens internas: 14 antes / 14 depois.
+- Plano PRO e gerador preservados.
