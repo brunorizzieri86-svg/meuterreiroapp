@@ -1,28 +1,26 @@
-# MEU TERREIRO — V0.4.9.2
+# MEU TERREIRO — V0.4.9.3
 
-## Consulentes: agendamento de atendimento
-- Novo botão **📅 Agendar** nos consulentes (lista de Pessoas no desktop e no celular, ficha, Agenda e Comunicação).
-- Informe data, horário e modalidade:
-  - **Presencial:** a mensagem leva o **endereço do terreiro** (vem de Configurações → Dados da Casa e pode ser ajustado na hora).
-  - **Online:** a mensagem avisa que o **link da videochamada será criado e enviado** antes do horário. Se você já tiver o link, cole no campo e ele segue na mensagem.
-- O atendimento fica **registrado na Agenda** (tipo Atendimento, vinculado ao consulente), com **Salvar na agenda** ou **Salvar e enviar WhatsApp**.
+## Primeiro acesso / login
+- **Corrigido:** em janelas de computador mais baixas, o botão **"Criar acesso no MEU TERREIRO"** ficava cortado e não dava para rolar. Agora o painel rola e o botão sempre pode ser alcançado (testado em janela baixa, tela grande e celular). A tela de login também foi corrigida.
 
-## Consulentes: convite para giras
-- Novo botão **📣 Convidar consulentes para gira** (Pessoas, Agenda e Comunicação → "Mensagens para consulentes").
-- Escolha a gira (próximas giras da Agenda), ajuste o texto se quiser e use **Enviar para o próximo**: cada clique abre o WhatsApp do próximo consulente com a mensagem pronta. Sem precisar lembrar de um por um.
-- Fica marcado quem já teve o convite aberto em cada gira; dá para desmarcar pessoas, reenviar e limpar as marcações.
-- Novo campo no cadastro do consulente: **quer receber convite para as giras**. Quem não quer, ou não tem WhatsApp, fica de fora da fila.
-- O texto do convite que você ajustar fica salvo para os próximos.
-- O envio continua sendo confirmado por você no WhatsApp (o app não envia sozinho).
+## Máscaras de digitação (em todo o app)
+- **Telefone e WhatsApp:** `(11) 99999-9999` ou `(11) 3333-4444`. Aceita colar número com +55 e converte sozinho.
+- **Dinheiro:** `1.234,56`. Digite só os números (8500 vira 85,00). Vale para mensalidade, valor de lançamento, custo, valor de patrimônio, metas e saldo de fundos, orçamento, pedido mínimo, subtotal e frete de cotação. Saldo real da conciliação e saldo inicial de fundo aceitam valor negativo.
+- **CPF/CNPJ:** formata sozinho conforme o tamanho (`000.000.000-00` ou `00.000.000/0000-00`), usado no cadastro de fornecedores.
+- **CEP:** `00000-000` (pronto para qualquer campo de CEP que for adicionado).
+- Valores que já estavam salvos aparecem formatados ao abrir o cadastro para editar.
+- Campos novos que forem criados no futuro com esses tipos já ganham a máscara automaticamente.
+- Datas e horários continuam com o seletor do próprio aparelho.
+- Não receberam máscara por serem texto livre: chave Pix, frete do fornecedor ("Grátis acima de R$ 300"), condição de pagamento e prazo.
+
+## V0.4.9.2
+- Consulentes: agendamento de atendimento (presencial com endereço ou online com aviso de link) e convite para giras com fila "enviar para o próximo".
 
 ## V0.4.9.1
-- Tipo **Mensalista** no lugar de Contribuinte (cadastros antigos convertidos).
-- Calendário da Agenda: dias com compromisso em degradê dourado, ponto laranja, contador de compromissos e dia selecionado em verde.
+- Tipo Mensalista; calendário da Agenda em degradê com contador e dia selecionado em verde.
 
 ## V0.4.9.0
-- Módulo **Pessoas** com tipos Mensalista, Consulente, Convidado e Outro; contribuição condicional; função em lista suspensa com cadastro manual.
-- Aniversariantes do mês, WhatsApp de Feliz Aniversário, botão de WhatsApp na lista.
-- PDFs em Pessoas (lista, aniversariantes, ficha), Mensalidades, Patrimônio, Comunicação, Fundos e Agenda.
+- Módulo Pessoas; função em lista; aniversariantes; PDFs em vários módulos.
 
 ## Mantido
 - Plano PRO, termos e privacidade, WhatsApp seguro do DEMO, rodapé dos PDFs, imagens e backups.
