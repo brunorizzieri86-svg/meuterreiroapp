@@ -1,4 +1,4 @@
-# MEU TERREIRO — V0.4.9.4
+# MEU TERREIRO — V0.4.9.5
 
 ## Licenciamento
 - 30 dias grátis por navegador/aparelho.

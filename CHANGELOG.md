@@ -1,21 +1,32 @@
-# MEU TERREIRO — V0.4.9.4
+# MEU TERREIRO — V0.4.9.5
 
-## Barra lateral em notebook / monitor pequeno
-- **Corrigido:** em telas baixas o menu lateral ficava cortado (Plano & Assinatura e Configurações sumiam) e não rolava. Agora o menu tem **barra de rolagem** própria, fina e discreta.
-- Em telas com menos de ~860 px de altura os botões ficam um pouco mais compactos, para caber mais itens sem precisar rolar. Em um notebook de 768 px de altura o menu inteiro já aparece sem rolar.
+## Controle de frequência (novo)
 
-## V0.4.9.3
-- Primeiro acesso e login rolam em janelas baixas (botão "Criar acesso" sempre alcançável).
-- Máscaras de telefone/WhatsApp, dinheiro, CPF/CNPJ e CEP em todo o app.
+### Chamada
+- **Agenda:** no detalhe de qualquer compromisso e na barra da Agenda há o botão **📋 Fazer chamada**. Também aparece em **Pessoas → Frequência** e nos avisos da tela Inicial.
+- A lista mostra as pessoas com controle de frequência. Com um toque em cada nome: **Presente, Atrasado, Falta ou Justificada** (toque de novo para limpar).
+- **Marcar todos presentes**, busca por nome, contadores ao vivo e **Incluir outra pessoa** (consulente, convidado ou quem não tem o controle ligado).
+- Pode ser feita na hora ou depois; ao reabrir, a chamada pode ser revisada. Há PDF da lista de chamada.
+- Cada chamada tem a opção "conta para a frequência" (já marcada para os tipos escolhidos nas regras).
 
-## V0.4.9.2
-- Consulentes: agendamento de atendimento (presencial/online) e convite para giras com fila "enviar para o próximo".
+### Relatório de frequência — Pessoas → Frequência
+- % por pessoa (barra colorida), presenças, atrasos, faltas e justificadas.
+- Filtros por **período** (mês, 3 meses, ano, tudo) e por **tipo de compromisso**, busca por pessoa.
+- Resumo: chamadas no período, frequência média, abaixo da meta, faltas seguidas.
+- **Por tipo de compromisso** e lista de **chamadas pendentes**.
+- **PDF do relatório**. A ficha da pessoa e o PDF da ficha mostram a frequência dos últimos 3 meses.
 
-## V0.4.9.1
-- Tipo Mensalista; calendário da Agenda em degradê com contador e dia selecionado em verde.
+### Regras e alertas
+- **Configurações → Frequência** (ou ⚙️ Regras e meta): meta mínima (padrão 75%), avisar após N faltas seguidas (padrão 3), mínimo de chamadas para avisar, como a **falta justificada** conta (neutra, presença ou falta) e **quais tipos de compromisso contam** (padrão: Gira e Reunião; crie Desenvolvimento, Mutirão etc. em Listas de apoio).
+- Atraso conta como presença.
+- **Tela Inicial** avisa: chamada pendente, "N pessoas com 3+ faltas seguidas" e "N pessoas abaixo da meta".
+- Botão **💬 Sentimos sua falta**: abre o WhatsApp com mensagem acolhedora pronta (você confirma o envio).
 
-## V0.4.9.0
-- Módulo Pessoas; função em lista; aniversariantes; PDFs em vários módulos.
+### Cadastro
+- Novo campo **Controlar frequência**, ligado por padrão nos Mensalistas; Consulentes e Convidados ficam de fora, mas podem ser ligados.
+
+## Versões anteriores
+- V0.4.9.4: menu lateral com rolagem em notebook. V0.4.9.3: primeiro acesso rola; máscaras. V0.4.9.2: atendimento e convite de gira para consulentes. V0.4.9.1/0: Mensalista, calendário, Pessoas, PDFs.
 
 ## Mantido
 - Plano PRO, termos e privacidade, WhatsApp seguro do DEMO, rodapé dos PDFs, imagens e backups.
