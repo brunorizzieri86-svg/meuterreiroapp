@@ -1,4 +1,4 @@
-# MEU TERREIRO — V0.4.10.2
+# MEU TERREIRO — V0.4.10.3
 
 Pacote de publicação para GitHub Pages.
 
@@ -44,3 +44,7 @@ Backup criptografado com senha própria (mínimo 10 caracteres), sem mudar o ace
 No Android, os destinos dependem do navegador e dos aplicativos instalados. Quando o app não puder abrir seletor ou compartilhar arquivo, baixe e mova a cópia pelo gerenciador de arquivos. Abra a publicação HTTPS para suporte completo. Guarde uma cópia fora do aparelho.
 
 Excluir toda a conta também apaga pontos internos. Apagar dados operacionais mantém casa/acesso e cria uma cópia anterior. As ações têm aviso, frase de confirmação e aceite.
+
+## Comunicação V0.4.10.3
+
+Dez modelos com parágrafos reais e campos (.......), edição de mensagens salvas, revisão por destinatário e bloqueio de texto incompleto antes do WhatsApp. A data e a hora criam lembrete interno, sem envio automático. Convites de gira continuam usando preenchimento automático por consulente. Mensagens antigas são normalizadas na apresentação e só são substituídas ao salvar a edição.
