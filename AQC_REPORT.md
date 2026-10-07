@@ -1,9 +1,8 @@
-# AQC — MEU TERREIRO V0.4.9.3
+# AQC — MEU TERREIRO V0.4.9.4
 
 ## Score automatizado: 100%
 ## JavaScript: ✅ sintaxe validada
-## Teste funcional (DOM simulado): ✅ sem erros
-## Teste visual em navegador real (Chromium): ✅ tela de primeiro acesso
+## Teste visual em navegador real (Chromium): ✅ barra lateral
 
 ## Verificações
 - ✅ version
@@ -12,27 +11,21 @@
 - ✅ demo_safe_preservado
 - ✅ termos_preservados
 - ✅ pdf_footer_preservado
-- ✅ primeiro_acesso_rola_desktop
-- ✅ mascara_telefone
-- ✅ mascara_cpf_cnpj
-- ✅ mascara_cep
-- ✅ mascara_dinheiro
-- ✅ mascara_automatica_novos_campos
+- ✅ barra_lateral_rolagem
+- ✅ barra_lateral_compacta_notebook
+- ✅ primeiro_acesso_rola
+- ✅ mascaras
 - ✅ consulentes_atendimento
 - ✅ convite_gira
-- ✅ mensalista
-- ✅ pdfs_modulos
 
-## Testes executados
-- Primeiro acesso em 3 tamanhos (janela 1116x640, tela 1920x960, celular 390x780): botão "Criar acesso" alcançável em todos. Na versão anterior, na janela 1116x640, o botão ficava fora da tela e sem rolagem.
-- Telefone: digitação progressiva, colagem com +55, excesso de dígitos cortado.
-- Dinheiro: 8 → 0,08; 8500 → 85,00; 123456 → 1.234,56; negativo na conciliação (-1.234,56); valor salvo volta ao formato ao editar (240000 → 2.400,00); conversão de volta para centavos confere (1.234,56 → 123456).
-- CPF/CNPJ: formatação progressiva e troca automática para CNPJ.
-- Campos de texto livre (Pix, frete, pagamento, nomes, buscas, login, senha) sem máscara.
+## Testes executados (tela 1366 px de largura)
+- Altura 650 px — versão anterior: último item do menu (Configurações) ficava fora da tela, sem rolagem.
+- Altura 650 px — nova: o menu rola e Configurações fica visível ao final.
+- Altura 768 px (notebook comum) — nova: o menu inteiro cabe sem rolar.
+- Altura 1000 px — nova: sem mudança visual.
 
 ## Observações
-- Não existe campo de CEP no app hoje (o endereço da Casa é um campo único); a máscara de CEP já está pronta caso o campo seja criado.
-- Cadastros antigos com telefone sem formatação aparecem formatados ao editar, sem perda de dados.
+- A barra de rolagem do menu só aparece quando necessário.
 - Faça backup antes de instalar por cima da versão anterior.
 
 ## Integridade
