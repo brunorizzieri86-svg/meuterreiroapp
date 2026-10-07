@@ -1,48 +1,38 @@
-# AQC — MEU TERREIRO V0.4.8.4
+# AQC — MEU TERREIRO V0.4.9.1
 
 ## Score automatizado: 100%
-## JavaScript: ✅ OK
-## Teste de segurança do WhatsApp DEMO: ✅ OK
+## JavaScript: ✅ sintaxe validada
+## Teste funcional (DOM simulado): ✅ sem erros
 
 ## Verificações
 - ✅ version
-- ✅ legal_version
-- ✅ terms_doc
-- ✅ privacy_doc
-- ✅ first_access_checkbox
-- ✅ first_access_whatsapp
-- ✅ legal_accept_validation
-- ✅ legal_accept_timestamp
-- ✅ legal_settings_row
-- ✅ demo_safe_router
-- ✅ demo_contacts_overridden
-- ✅ monthly_template
-- ✅ event_template
-- ✅ supplier_template
-- ✅ restock_template
-- ✅ quotation_template
-- ✅ purchase_template
-- ✅ generic_member_template
-- ✅ message_variables
-- ✅ pdf_premium
-- ✅ pdf_footer_preserved
-- ✅ funds_clean
-- ✅ restock_clean
-- ✅ quotation_clean
-- ✅ order_clean
-- ✅ existing_date_filters
-- ✅ tutorial_preserved
-- ✅ pro_preserved
-- ✅ money_preserved
-- ✅ images_preserved
-- ✅ cache
+- ✅ imagens_preservadas
+- ✅ pro_preservado
+- ✅ demo_safe_preservado
+- ✅ termos_preservados
+- ✅ pdf_footer_preservado
+- ✅ tipo_mensalista
+- ✅ migracao_contribuinte_antigo
+- ✅ agenda_degrade
+- ✅ agenda_selecionado_verde
+- ✅ agenda_contador
+- ✅ agenda_dia_marcado_js
+- ✅ funcao_lista_suspensa
+- ✅ contribuicao_condicional
+- ✅ whatsapp_aniversario
+- ✅ pdfs_modulos
+- ✅ layout_desktop_celular
 
-## Observações jurídicas
-- Os Termos e a Política foram implementados como base operacional do produto.
-- Antes da comercialização em escala, recomenda-se revisão por profissional jurídico, especialmente por envolver dados pessoais sensíveis relacionados a religião.
+## Testes executados
+- Migração: "Contribuinte" antigo virou "Mensalista"; cadastro com função "consulentes" virou Consulente.
+- Formulário: troca de tipo mostra/oculta contribuição; função manual é salva na lista.
+- Aniversário: mensagem de WhatsApp gerada; PDFs (9 tipos) gerados sem erro; telas renderizadas sem erro.
+- Agenda: dia com 2 compromissos recebe a classe de destaque e o contador "2".
+
+## Observações
+- A aparência final do calendário segue a referência enviada; confira no desktop e no celular.
+- Faça backup antes de instalar por cima da versão anterior.
 
 ## Integridade
-- Arquivos ausentes em relação à V0.4.8.3: 0
-- Nenhuma imagem interna removida.
-- Plano PRO e gerador preservados.
+- Nenhuma imagem interna removida. Plano PRO e gerador preservados.
 - Item 6 ainda não iniciado.
