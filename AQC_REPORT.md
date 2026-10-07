@@ -1,4 +1,4 @@
-# AQC — MEU TERREIRO V0.4.9.1
+# AQC — MEU TERREIRO V0.4.9.2
 
 ## Score automatizado: 100%
 ## JavaScript: ✅ sintaxe validada
@@ -11,27 +11,29 @@
 - ✅ demo_safe_preservado
 - ✅ termos_preservados
 - ✅ pdf_footer_preservado
-- ✅ tipo_mensalista
-- ✅ migracao_contribuinte_antigo
+- ✅ agendar_atendimento
+- ✅ atendimento_presencial_endereco
+- ✅ atendimento_online_link
+- ✅ atendimento_registrado_agenda
+- ✅ convite_gira_fila
+- ✅ convite_marcacao_enviados
+- ✅ consulente_quer_convite
+- ✅ atalhos_pessoas_agenda_comunicacao
+- ✅ mensalista
 - ✅ agenda_degrade
-- ✅ agenda_selecionado_verde
-- ✅ agenda_contador
-- ✅ agenda_dia_marcado_js
-- ✅ funcao_lista_suspensa
-- ✅ contribuicao_condicional
-- ✅ whatsapp_aniversario
-- ✅ pdfs_modulos
 - ✅ layout_desktop_celular
 
 ## Testes executados
-- Migração: "Contribuinte" antigo virou "Mensalista"; cadastro com função "consulentes" virou Consulente.
-- Formulário: troca de tipo mostra/oculta contribuição; função manual é salva na lista.
-- Aniversário: mensagem de WhatsApp gerada; PDFs (9 tipos) gerados sem erro; telas renderizadas sem erro.
-- Agenda: dia com 2 compromissos recebe a classe de destaque e o contador "2".
+- Agendamento presencial: evento criado na Agenda com o consulente vinculado; mensagem de WhatsApp com data, dia da semana, horário e endereço.
+- Agendamento online: campo de endereço some e o de link aparece; mensagem sem link avisa que o link será criado e enviado; com link, o link vai na mensagem.
+- Convite de gira: fila abre um WhatsApp por clique, marca quem já foi, bloqueia o botão ao terminar; "Limpar marcações" e desmarcar pessoas atualizam a contagem.
+- Quem não tem WhatsApp ou não quer convites fica fora da fila; o campo "quer receber convites" é salvo no cadastro.
+- Telas de Pessoas, Ficha, Agenda e Comunicação renderizam com os novos atalhos.
 
 ## Observações
-- A aparência final do calendário segue a referência enviada; confira no desktop e no celular.
-- Faça backup antes de instalar por cima da versão anterior.
+- O WhatsApp abre uma conversa por clique (limite do próprio WhatsApp/navegador); o app não envia mensagens sozinho.
+- Para o endereço sair automático, preencha Configurações → Dados da Casa.
+- Faça backup antes de instalar por cima da versão anterior. Teste visual no desktop e no celular.
 
 ## Integridade
 - Nenhuma imagem interna removida. Plano PRO e gerador preservados.

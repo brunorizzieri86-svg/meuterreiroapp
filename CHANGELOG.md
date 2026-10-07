@@ -1,28 +1,28 @@
-# MEU TERREIRO — V0.4.9.1
+# MEU TERREIRO — V0.4.9.2
 
-## Ajustes desta versão
-- O tipo **Contribuinte** passou a se chamar **Mensalista** (cadastro, filtros, PDFs e relatórios). Cadastros que já estavam como Contribuinte foram convertidos automaticamente.
-- **Calendário da Agenda** redesenhado:
-  - dias com compromisso em **degradê dourado**, com ponto laranja em degradê;
-  - **contador** com o número de compromissos no canto do dia;
-  - o dia **selecionado fica verde** (com ou sem compromisso).
+## Consulentes: agendamento de atendimento
+- Novo botão **📅 Agendar** nos consulentes (lista de Pessoas no desktop e no celular, ficha, Agenda e Comunicação).
+- Informe data, horário e modalidade:
+  - **Presencial:** a mensagem leva o **endereço do terreiro** (vem de Configurações → Dados da Casa e pode ser ajustado na hora).
+  - **Online:** a mensagem avisa que o **link da videochamada será criado e enviado** antes do horário. Se você já tiver o link, cole no campo e ele segue na mensagem.
+- O atendimento fica **registrado na Agenda** (tipo Atendimento, vinculado ao consulente), com **Salvar na agenda** ou **Salvar e enviar WhatsApp**.
 
-## Pessoas (antes "Filhos da Casa") — V0.4.9.0
-- Menu, tela e botões agora se chamam **Pessoas** (editável em Configurações → Terminologia).
-- **Tipo de pessoa**: Mensalista, Consulente, Convidado ou Outro.
-- Contribuição só aparece quando faz sentido:
-  - Mensalista → Mensalidade (valor próprio ou padrão da casa), Valor avulso ou Isento;
-  - Consulente → Sem contribuição ou Valor avulso;
-  - Convidado / Outro → sem contribuição.
-- Só quem paga **mensalidade** entra em Financeiro → Mensalidades e nas pendências.
-- **Função / vínculo em lista suspensa** (Umbanda, Candomblé e cargos gerais) com opção de **cadastro manual**, que fica salvo na lista.
-- Lista com coluna **Aniversário**, filtro por tipo e **botão WhatsApp** em quem tem WhatsApp cadastrado.
-- **🎂 Aniversariantes do mês** (seletor de mês, PDF e botão Parabéns), aviso de aniversário do dia e mensagem pronta de **Feliz Aniversário** no WhatsApp.
+## Consulentes: convite para giras
+- Novo botão **📣 Convidar consulentes para gira** (Pessoas, Agenda e Comunicação → "Mensagens para consulentes").
+- Escolha a gira (próximas giras da Agenda), ajuste o texto se quiser e use **Enviar para o próximo**: cada clique abre o WhatsApp do próximo consulente com a mensagem pronta. Sem precisar lembrar de um por um.
+- Fica marcado quem já teve o convite aberto em cada gira; dá para desmarcar pessoas, reenviar e limpar as marcações.
+- Novo campo no cadastro do consulente: **quer receber convite para as giras**. Quem não quer, ou não tem WhatsApp, fica de fora da fila.
+- O texto do convite que você ajustar fica salvo para os próximos.
+- O envio continua sendo confirmado por você no WhatsApp (o app não envia sozinho).
 
-## PDFs
-- Pessoas (lista filtrada, geral, aniversariantes e ficha individual — sem a observação restrita).
-- Mensalidades (pendentes, em dia, geral), Patrimônio, Comunicação, Fundos e Agenda (semana/mês/ano).
-- Relatórios com atalhos para todos. Financeiro, Estoque, Fornecedores, Documentos e Eventos mantêm seus PDFs.
+## V0.4.9.1
+- Tipo **Mensalista** no lugar de Contribuinte (cadastros antigos convertidos).
+- Calendário da Agenda: dias com compromisso em degradê dourado, ponto laranja, contador de compromissos e dia selecionado em verde.
+
+## V0.4.9.0
+- Módulo **Pessoas** com tipos Mensalista, Consulente, Convidado e Outro; contribuição condicional; função em lista suspensa com cadastro manual.
+- Aniversariantes do mês, WhatsApp de Feliz Aniversário, botão de WhatsApp na lista.
+- PDFs em Pessoas (lista, aniversariantes, ficha), Mensalidades, Patrimônio, Comunicação, Fundos e Agenda.
 
 ## Mantido
 - Plano PRO, termos e privacidade, WhatsApp seguro do DEMO, rodapé dos PDFs, imagens e backups.
