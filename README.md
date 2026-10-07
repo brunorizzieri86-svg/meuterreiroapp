@@ -1,4 +1,4 @@
-# MEU TERREIRO — V0.4.10.3
+# MEU TERREIRO — V0.4.10.4
 
 Pacote de publicação para GitHub Pages.
 
@@ -17,7 +17,7 @@ Extraia o ZIP e envie o conteúdo para a raiz do repositório: index.html, manif
 - Anotação interna e checklist separados do conteúdo compartilhado.
 - Agenda e cobrança financeira com confirmação e proteção contra duplicidade.
 
-A cobrança começa Pendente. O recebimento é confirmado no Financeiro. Alterar o catálogo não muda valores de orçamentos já salvos. Os nomes e serviços são definidos pelo responsável da casa.
+Cobranças geradas por "Gerar cobrança" começam Pendentes; o botão "Receber" lança o valor como Recebido no Financeiro. Alterar o catálogo não muda valores de orçamentos já salvos. Os nomes e serviços são definidos pelo responsável da casa.
 
 ## Acesso e dados
 
@@ -48,3 +48,7 @@ Excluir toda a conta também apaga pontos internos. Apagar dados operacionais ma
 ## Comunicação V0.4.10.3
 
 Dez modelos com parágrafos reais e campos (.......), edição de mensagens salvas, revisão por destinatário e bloqueio de texto incompleto antes do WhatsApp. A data e a hora criam lembrete interno, sem envio automático. Convites de gira continuam usando preenchimento automático por consulente. Mensagens antigas são normalizadas na apresentação e só são substituídas ao salvar a edição.
+
+## Trabalhos Espirituais V0.4.10.4
+
+Ficha reorganizada: etapa e situação do pagamento com cores próprias, "Próximo passo" guiado, linha de etapas clicável e card Pagamento com parcelas. Botão **Receber** (Pix, dinheiro, débito, transferência ou crédito de 1x a 12x com juros opcionais) lança direto como Recebido no Financeiro, inclusive recebimento parcial; **Gerar cobrança** cria pendências futuras. Formulário de novo trabalho em 6 passos com explicações. Financeiro → Trabalhos Espirituais com filtros por situação e painel "Quem cobrar primeiro". Lançamentos do Financeiro geral passam a ter cor por situação (recebido, pendente, vence hoje, vencido, cancelado). O cache do PWA foi atualizado (meuterreiro-v04104).

@@ -1,4 +1,4 @@
-const CACHE='meuterreiro-v04103';
+const CACHE='meuterreiro-v04104';
 const ASSETS=[
   './','./index.html','./manifest.json','./manual.html',
   './assets/logo-meu-terreiro.png',
