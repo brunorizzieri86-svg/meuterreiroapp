@@ -1,3 +1,15 @@
+# MEU TERREIRO — V0.4.9.8
+
+- Vencimento mensal com digitação/sugestões; ajuste nos meses curtos.
+- Vencimento avulso com calendário e data digitável sincronizados.
+- Motivo e forma preferida de pagamento personalizados.
+- Contribuição independente do tipo da pessoa.
+- Lançar pagamento na ficha abre um lançamento pendente para revisão.
+- Registro de mensalidade mantém o vencimento separado da data de recebimento.
+- Ficha, lista de mensalidades, PDF e lembrete mostram vencimento.
+- Lembrete usa o valor individual da pessoa.
+- Cache PWA atualizado; imagens e identidade existentes preservadas.
+
 # MEU TERREIRO — V0.4.9.7
 
 ## Frequência: classificação, filtros e destaque

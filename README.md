@@ -1,4 +1,4 @@
-# MEU TERREIRO — V0.4.9.7
+# MEU TERREIRO — V0.4.9.8
 
 ## Licenciamento
 - 30 dias grátis por navegador/aparelho.
@@ -17,3 +17,12 @@ O gerador de códigos PRO deve permanecer somente com o desenvolvedor e não dev
 
 ## Nuvem
 Esta versão continua local-first. Desktop e celular não sincronizam entre si. Essa arquitetura será decidida em uma etapa futura.
+
+## Atualização do cadastro
+- Dia de vencimento mensal entre 1 e 31, opcional.
+- Vencimento avulso pelo calendário ou digitação DD/MM/AAAA.
+- Motivo e pagamento preferido com sugestões e digitação livre.
+- Na ficha, Lançar pagamento abre o Financeiro com os dados; revise e salve.
+- O cadastro não cria cobranças automaticamente.
+- Faça backup no aplicativo antes de substituir os arquivos. Extraia o ZIP mantendo pastas e nomes; publique index.html na raiz.
+- O index também pode ser aberto sozinho para teste local; a instalação PWA requer hospedagem HTTPS.
