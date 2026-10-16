@@ -1,4 +1,4 @@
-# MEU TERREIRO — V0.4.10.4
+# MEU TERREIRO — V0.4.12.1
 
 Pacote de publicação para GitHub Pages.
 
@@ -52,3 +52,21 @@ Dez modelos com parágrafos reais e campos (.......), edição de mensagens salv
 ## Trabalhos Espirituais V0.4.10.4
 
 Ficha reorganizada: etapa e situação do pagamento com cores próprias, "Próximo passo" guiado, linha de etapas clicável e card Pagamento com parcelas. Botão **Receber** (Pix, dinheiro, débito, transferência ou crédito de 1x a 12x com juros opcionais) lança direto como Recebido no Financeiro, inclusive recebimento parcial; **Gerar cobrança** cria pendências futuras. Formulário de novo trabalho em 6 passos com explicações. Financeiro → Trabalhos Espirituais com filtros por situação e painel "Quem cobrar primeiro". Lançamentos do Financeiro geral passam a ter cor por situação (recebido, pendente, vence hoje, vencido, cancelado). O cache do PWA foi atualizado (meuterreiro-v04104).
+
+## Agenda V0.4.11.0
+
+Convidados e participantes em cada compromisso, com busca por nome ou telefone e atalhos para consulentes e filhos da casa. Botão **Avisar** em cada compromisso e **Avisar sobre este dia** no calendário: convite, lembrete ou aviso livre por WhatsApp, em fila "enviar e ir para o próximo", com barra de busca para incluir qualquer contato. Imagem do evento (PNG/JPG) ajustada para story 1080×1920, postagem 1080×1350 ou proporção original, guardada no compromisso e enviada pelo menu de compartilhar do celular (o link do WhatsApp não anexa imagem; sem suporte, a imagem é baixada). Lembretes aos convidados no dia, 1 ou 2 dias antes, com aviso na Agenda e no sino; o envio continua manual. O cache do PWA foi atualizado (meuterreiro-v04110).
+
+## Tour, contatos e modelos V0.4.12.0
+
+**Tour guiado:** convite ao abrir o app (Começar Tour, Vejo depois, Não aparecer novamente), janela para escolher o tour completo ou módulos específicos e destaque passo a passo dos botões de cada tela. Sempre disponível em Configurações → Tour guiado.
+
+**Importar contatos:** em Pessoas, por agenda do celular (navegadores Android compatíveis), arquivo .vcf/.csv ou lista colada, com conferência prévia e detecção de duplicados por telefone e nome.
+
+**Modelos por tipo de evento:** festa, gira e reunião têm convite, lembrete e aviso próprios, editáveis e salvos por tipo.
+
+O cache do PWA foi atualizado (meuterreiro-v04120).
+
+## Enviar para grupo V0.4.12.1
+
+Botão **Enviar para grupo** em Agenda → Avisar e em Comunicação → mensagem: abre o WhatsApp sem destinatário para escolher grupo, lista de transmissão ou vários contatos (nome sai como "pessoal"), com a imagem do evento pelo menu de compartilhar quando disponível. Botão **Copiar** para colar a mensagem onde quiser. Cache do PWA: meuterreiro-v04121.
