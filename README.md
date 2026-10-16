@@ -1,4 +1,4 @@
-# MEU TERREIRO — V0.4.12.1
+# MEU TERREIRO — V0.4.14.0
 
 Pacote de publicação para GitHub Pages.
 
@@ -70,3 +70,11 @@ O cache do PWA foi atualizado (meuterreiro-v04120).
 ## Enviar para grupo V0.4.12.1
 
 Botão **Enviar para grupo** em Agenda → Avisar e em Comunicação → mensagem: abre o WhatsApp sem destinatário para escolher grupo, lista de transmissão ou vários contatos (nome sai como "pessoal"), com a imagem do evento pelo menu de compartilhar quando disponível. Botão **Copiar** para colar a mensagem onde quiser. Cache do PWA: meuterreiro-v04121.
+
+## Tour Oscar V0.4.13.0
+
+Tour guiado ampliado: explicações completas em todos os módulos (listas do que cada opção faz, como o Financeiro contabiliza, etapas dos trabalhos, situação do estoque, frequência e backup) e **aulas práticas** que abrem o formulário real e explicam campo por campo (pessoa, atendimento, compromisso, lançamento, trabalho espiritual, mensagem e estoque), com "Preencher exemplo". Aula "Como o dinheiro é contabilizado" com os números reais da casa. Durante o tour, o app oferece praticar na hora e retoma de onde parou. Cache do PWA: meuterreiro-v04130.
+
+## Excluir registros V0.4.14.0
+
+Botão **🗑 Excluir** individual nas listas e nos formulários (trabalhos, catálogo, pessoas, lançamentos, eventos, mensagens, estoque, fornecedores, patrimônio, documentos) e **exclusão em lote** (☑ Excluir vários + Selecionar todos). Cada exclusão mostra o impacto antes de confirmar; trabalhos permitem manter ou excluir os lançamentos do Financeiro e o compromisso da Agenda. Ponto de restauração automático antes de exclusões em lote, de lançamentos e de trabalhos.
