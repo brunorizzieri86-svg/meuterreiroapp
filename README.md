@@ -1,4 +1,4 @@
-# MEU TERREIRO — V0.4.16.0
+# MEU TERREIRO — V0.4.17.0
 
 Pacote de publicação para GitHub Pages.
 
@@ -89,3 +89,8 @@ Cada compromisso aceita **várias chamadas** (abas), com escolha de **quem parti
 Reunião online (Google Meet, Jitsi ou outro link) em cada compromisso, com o link na mensagem de WhatsApp. Botões Google Agenda e arquivo .ics, e calendário .ics do mês. Conexão opcional com a conta Google (Configurações → Google Agenda): envio automático de compromissos criados, alterados e excluídos para a agenda "Meu Terreiro" e criação automática da sala do Meet. Requer ID do cliente OAuth (passo a passo no manual) e a origem do GitHub Pages autorizada. Acesso do Google dura cerca de 1 hora; sincronização só de ida.
 
 Para o usuário só tocar em "Entrar com Google": o desenvolvedor registra o app uma única vez no Google Cloud (API Google Calendar + ID do cliente OAuth Aplicativo da Web, origem = endereço do GitHub Pages) e cola o ID na constante G_DEFAULT_CLIENT_ID do index.html.
+
+
+## Atualização V0.4.17.0
+
+Trabalhos Espirituais: várias propostas de serviço juntas — botão "+ Escolher vários" no passo 3 (marca vários modelos do catálogo, com quantidade) e "Adicionar modelo" agora soma em vez de substituir. Avisos: as 4 janelas do navegador ("meuterreiroapp.com.br diz") foram trocadas por janelas do app; as confirmações de exclusão/cancelamento/PIN/apagar dados/restaurar ficaram mais claras, com botão vermelho nas ações perigosas; mensagens rápidas coloridas, com tempo proporcional ao texto.

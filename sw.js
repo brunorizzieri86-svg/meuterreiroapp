@@ -1,4 +1,4 @@
-const CACHE='meuterreiro-v06100';
+const CACHE='meuterreiro-v04170';
 const ASSETS=[
   './','./index.html','./manifest.json','./manual.html','./privacidade.html','./termos.html',
   './assets/logo-meu-terreiro.png',
@@ -18,8 +18,6 @@ self.addEventListener('activate',e=>{
 });
 self.addEventListener('fetch',e=>{
   if(e.request.method!=='GET')return;
-  // Nunca guardar em cache chamadas a outros domínios (Supabase: login, agenda, avisos)
-  if(new URL(e.request.url).origin!==self.location.origin)return;
   const isNav=e.request.mode==='navigate'||new URL(e.request.url).pathname.endsWith('/index.html');
   if(isNav){
     e.respondWith(
