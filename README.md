@@ -1,4 +1,4 @@
-# MEU TERREIRO — V0.4.17.0
+# MEU TERREIRO — V0.6.1.0
 
 Pacote de publicação para GitHub Pages.
 
@@ -18,6 +18,43 @@ Extraia o ZIP e envie o conteúdo para a raiz do repositório: index.html, manif
 - Agenda e cobrança financeira com confirmação e proteção contra duplicidade.
 
 Cobranças geradas por "Gerar cobrança" começam Pendentes; o botão "Receber" lança o valor como Recebido no Financeiro. Alterar o catálogo não muda valores de orçamentos já salvos. Os nomes e serviços são definidos pelo responsável da casa.
+
+## V0.6.1.0 · Terreiro Conectado, guia e painel de acessos
+- Plano online renomeado para **Terreiro Conectado**.
+- Botões "Quero assinar" abrem o WhatsApp (11) 95352-5141 com mensagens distintas: uma para o plano PRO (com ID do aparelho) e outra para o Terreiro Conectado; ambas dizem que vêm do app MEU TERREIRO.
+- Nova tela **Como funciona o MEU TERREIRO** (seletor, login e cadastro).
+- Convite de filhos/cambonos por um único link: a pessoa escolhe Filho(a) ou Cambono, cria a própria senha e aguarda aprovação.
+- **Acessos & Nuvem** em abas: Convidar, Pessoas (Aprovar, Recusar, Desativar, Reativar, Remover, com filtros), Pagamentos, Avisos e orientações, Plano e sincronização.
+
+## V0.6.0.3 · Telas de entrada mais claras
+Seletor de módulos explica as duas formas de uso (somente neste aparelho, offline, ou **Terreiro Conectado**, online) e avisa que filhos, cambonos e consulentes dependem do convite do Pai/Mãe. Login do Pai/Mãe separa a Casa Conectada do modo offline (30 dias grátis). Cadastro explica o que é o cadastro e o código de liberação e oferece o modo offline sem código. Recuperação de senha informa que o link vai por e-mail. O nome do plano online fica na constante `MT_PLANO` e o WhatsApp para pedir código em `MT_CONTATO` (dentro do script `mt-cloud-js`). Novo `supabase/04_painel_dev.sql` (gerador privado de códigos, entregue à parte).
+
+## V0.6.0.2 · Quatro módulos integrados
+
+Novo na V0.6.0.2: **código de liberação** (uso único, gerado por você) para criar uma casa e **plano online por casa** com vencimento, aviso, suspensão e renovação por código. Rode também `supabase/03_liberacao.sql` (veja o passo 4-B do guia).
+
+Correção V0.6.0.2: botão de mostrar senha funcionando; cadastro mostra qual campo está errado e como preencher; falha ao gravar no aparelho agora aparece na tela.
+
+- Novo módulo **Consulentes**: autocadastro por link/código com aprovação do Pai/Mãe; vê giras abertas, avisos e as orientações/banhos enviados individualmente.
+- **Agenda automática**: ao salvar no app, a agenda é publicada na nuvem sem botão.
+- **Mensalidade com comprovante**: filho envia, Pai/Mãe valida (lança no Financeiro) e o filho é notificado.
+- Convites por link no WhatsApp (QR Code fica para depois). Sem tela de configuração do Supabase para o usuário.
+- Rodar no Supabase: `supabase/01_schema.sql` e depois `supabase/02_integracao.sql`. Cache do PWA: meuterreiro-v06000.
+
+## Acessos por módulo e Supabase V0.5.0.0
+
+Nova tela inicial de escolha do módulo: **Pai/Mãe da casa**, **Filhos da casa** e **Cambonos e apoio**, cada um com login e cadastro próprios (e-mail e senha, recuperação de senha por e-mail). Filhos e cambonos se cadastram com o **código da casa** e entram após a **aprovação** do Pai/Mãe.
+
+- **Pai/Mãe**: continua com o app completo. Nova tela **Acessos & Nuvem** (menu lateral; no celular, Mais): código da casa, convite por WhatsApp, aprovar/desativar/remover pessoas, publicar a agenda e avisos.
+- **Filhos**: portal com Início, Agenda (calendário), Avisos e Meu cadastro (edita os próprios dados e a senha).
+- **Cambonos**: igual ao filho, com materiais e responsável dos eventos.
+- Os dados administrativos (financeiro, trabalhos, estoque etc.) continuam locais no aparelho do Pai/Mãe. Na nuvem ficam só cadastros de acesso, agenda publicada e avisos.
+- Sem Supabase configurado, o app abre o acesso local como nas versões anteriores.
+- O acesso local (login e senha do aparelho) continua disponível em "Entrar com o acesso local deste aparelho".
+
+Configuração: veja `SUPABASE_GUIA.md` e rode `supabase/01_schema.sql` no SQL Editor do Supabase. Preencha `MT_SUPABASE` no `index.html` com a URL e a chave **anon/publishable** (nunca a `service_role`). A pasta `supabase/` e o guia não são necessários na publicação do site.
+
+O cache do PWA foi atualizado (meuterreiro-v05000) e chamadas a outros domínios deixam de ser guardadas em cache.
 
 ## Acesso e dados
 
