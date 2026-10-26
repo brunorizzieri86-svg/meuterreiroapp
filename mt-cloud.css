@@ -281,3 +281,4 @@ button:active:not(:disabled),.btn:active:not(:disabled),.tab:active,.segment-pil
 label.mt-invalid>input,label.mt-invalid>select,label.mt-invalid>textarea,input.mt-invalid,select.mt-invalid,textarea.mt-invalid{border:2px solid #c0392b!important;background:#fff5f4!important;box-shadow:0 0 0 3px rgba(192,57,43,.2)!important}
 label.mt-invalid{color:#c0392b}
 .swz-more{margin-top:12px;border:1px dashed #d9cfae;border-radius:12px;padding:8px 12px;background:#fffdf6}.swz-more>summary{cursor:pointer;font-weight:800;color:#6b5a2a;padding:4px 0}.swz-more[open]>summary{margin-bottom:10px}
+.swz-pexp{display:grid;grid-template-columns:1fr 130px;gap:8px;align-items:center;margin-top:8px}.swz-pexp input.swc_ex_v{width:100%}
