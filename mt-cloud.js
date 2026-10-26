@@ -2747,5 +2747,13 @@ document.addEventListener('click',e=>{
 window.addEventListener('click',e=>{if(GUIA.on&&GUIA.cur&&GUIA.cur.tap&&!GUIA.nt&&GUIA.el&&GUIA.el.contains&&GUIA.el.contains(e.target)){const my=GUIA.seq;setTimeout(()=>{if(my===GUIA.seq)guiaGo(1,true)},450)}},true);
 window.addEventListener('resize',()=>{if(GUIA.on)guiaShow()});
 
+/* olho para ver a senha em qualquer campo de senha */
+(function(){
+ const css=document.createElement('style');css.textContent='.mt-eyew{position:relative;display:block;margin-bottom:12px}.mt-eyew>input{padding-right:78px!important;width:100%;margin:0!important}.mt-eye{position:absolute!important;right:8px!important;top:50%!important;bottom:auto!important;left:auto!important;transform:translateY(-50%)!important;width:auto!important;min-width:0!important;margin:0!important;height:32px!important;padding:0 10px!important;border:1px solid #c99539;border-radius:8px;background:#fff8e6;color:#173d2f;font:700 12px/1 -apple-system,Segoe UI,Arial,sans-serif;cursor:pointer}.mt-eye:hover{background:#f3e3b8}';document.head.appendChild(css);
+ function add(i){if(i.dataset.eye||i.closest('.password-wrap'))return;i.dataset.eye='1';const w=document.createElement('span');w.className='mt-eyew';i.parentNode.insertBefore(w,i);w.appendChild(i);const b=document.createElement('button');b.type='button';b.className='mt-eye';b.textContent='Ver';b.setAttribute('aria-label','Mostrar ou ocultar senha');b.title='Mostrar senha';b.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();const s=i.type==='password';i.type=s?'text':'password';b.textContent=s?'Ocultar':'Ver';b.title=s?'Ocultar senha':'Mostrar senha';i.focus()});w.appendChild(b)}
+ function scan(){document.querySelectorAll('input[type=password]').forEach(add)}
+ new MutationObserver(scan).observe(document.documentElement,{childList:true,subtree:true});scan();
+})();
+
 window.mtCloud={guiaStart,EQM,EQ,FIN,EST,REG,REV,QR,TKP,PT,AX,portalPaint,configured,api,session:()=>S,profile:()=>MEM,pubEvents,pubFees,syncAll};
 })();
