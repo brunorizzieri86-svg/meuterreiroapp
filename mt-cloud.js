@@ -2755,5 +2755,159 @@ window.addEventListener('resize',()=>{if(GUIA.on)guiaShow()});
  new MutationObserver(scan).observe(document.documentElement,{childList:true,subtree:true});scan();
 })();
 
+/* ======================================================================
+   V0.13.0.0 · "ESTE REGISTRO ACABOU DE SER ALTERADO" (edição simultânea)
+   A) aparelho do Pai/Mãe: registro mudou por trás da janela aberta (nuvem ou outra pessoa)
+   B) duas janelas do app no mesmo aparelho (uma não apaga a outra)
+   C) portal da equipe: confere na nuvem antes de gravar
+   ====================================================================== */
+const MTG={snap:[],ids:[],userUntil:0,bypass:false,lastBtn:null,P:new Map(),pforce:false};
+const gOpen=()=>{const m=document.getElementById('modalRoot');return !!(m&&m.children.length)};
+function gDlg(o){
+  const old=document.getElementById('mtConf');if(old)old.remove();
+  const d=document.createElement('div');d.id='mtConf';
+  d.innerHTML=`<div class="mtg-ov" role="alertdialog" aria-modal="true"><div class="mtg-card"><div class="mtg-ic">⚠️</div><h2>${E(o.title)}</h2><div class="mtg-body">${o.html}</div><div class="mtg-btns">${o.btns.map((b,i)=>`<button class="btn ${b.cls||''}" data-g="${i}">${E(b.t)}</button>`).join('')}</div></div></div>`;
+  document.body.appendChild(d);
+  d.addEventListener('click',e=>{const b=e.target.closest('[data-g]');if(!b)return;e.stopPropagation();d.remove();const f=o.btns[+b.dataset.g];if(f&&f.fn)f.fn()});
+}
+const gWhen=iso=>{try{const t=new Date(iso);if(isNaN(t))return '';return t.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}catch(e){return ''}};
+/* ---------- A) registros abertos no aparelho do Pai/Mãe ---------- */
+function gSnapshot(){
+  const root=document.getElementById('modalRoot');MTG.snap=[];MTG.ids=[];
+  if(!root||!root.children.length)return;
+  const ids=new Set();root.querySelectorAll('[data-id]').forEach(el=>{const v=el.getAttribute('data-id');if(v&&v.length>1)ids.add(v)});
+  MTG.ids=[...ids];if(!ids.size||typeof state!=='object'||!state)return;
+  Object.keys(state).forEach(k=>{const L=state[k];if(!Array.isArray(L)||L.length>20000)return;L.forEach(it=>{if(it&&typeof it==='object'&&ids.has(String(it.id))){try{MTG.snap.push({k,id:String(it.id),js:JSON.stringify(it)})}catch(e){}}})});
+}
+function gChanges(){
+  const out=[];
+  MTG.snap.forEach(r=>{
+    const cur=((state||{})[r.k]||[]).find(x=>x&&String(x.id)===r.id);
+    if(!cur){out.push({r,gone:true});return}
+    let js;try{js=JSON.stringify(cur)}catch(e){return}
+    if(js!==r.js)out.push({r,cur,old:JSON.parse(r.js)});
+  });
+  return out;
+}
+const G_SKIP=new Set(['lastBy','lastAt','updatedAt','history','hist','audit','createdAt']);
+function gLines(c){
+  const F=(typeof REV_F==='object'&&REV_F[c.r.k])||{},ks=new Set([...Object.keys(c.old||{}),...Object.keys(c.cur||{})]),L=[];
+  ks.forEach(f=>{if(G_SKIP.has(f))return;const a=JSON.stringify(c.old[f]??''),b=JSON.stringify(c.cur[f]??'');if(a===b)return;
+    if(typeof c.old[f]==='object'&&c.old[f]!==null||typeof c.cur[f]==='object'&&c.cur[f]!==null){if(F[f])L.push(`<li><b>${E(F[f])}</b> foi alterado</li>`);return}
+    if(F[f])L.push(`<li><b>${E(F[f])}:</b> ${E(revVal(c.r.k,f,c.old[f]))} → ${E(revVal(c.r.k,f,c.cur[f]))}</li>`)});
+  return L.slice(0,6).join('');
+}
+function gConflictLocal(btn){
+  const ch=gChanges();if(!ch.length)return false;
+  const html=ch.slice(0,3).map(c=>{
+    if(c.gone)return `<p><b>Este registro foi excluído</b> enquanto a janela estava aberta.</p>`;
+    const nm=c.cur.title||c.cur.name||c.cur.description||'Registro',who=c.cur.lastBy||'outra pessoa ou outro aparelho',at=gWhen(c.cur.lastAt);
+    return `<p><b>${E(nm)}</b> foi alterado por <b>${E(who)}</b>${at?' às '+at:''}.</p>${gLines(c)?`<ul>${gLines(c)}</ul>`:''}`;
+  }).join('')+'<p class="small muted">Se você salvar agora, o que você digitou vale e o que a outra pessoa mudou pode se perder. Veja como ficou antes.</p>';
+  gDlg({title:'Este registro acabou de ser alterado',html,btns:[
+    {t:'Ver como ficou',cls:'primary',fn:()=>{try{closeModal()}catch(e){const m=document.getElementById('modalRoot');if(m)m.innerHTML=''}try{render()}catch(e){}}},
+    {t:'Salvar mesmo assim',fn:()=>{ch.forEach(c=>{if(!c.gone)c.r.js=JSON.stringify(c.cur)});MTG.bypass=true;try{btn.click()}finally{MTG.bypass=false}}},
+    {t:'Voltar',fn:()=>{}}]});
+  return true;
+}
+(function(){
+  const root=document.getElementById('modalRoot');
+  if(root&&window.MutationObserver)new MutationObserver(()=>{gSnapshot()}).observe(root,{childList:true});
+  document.addEventListener('click',e=>{
+    const b=e.target.closest&&e.target.closest('#modalRoot button');if(!b)return;
+    MTG.userUntil=Date.now()+4000;
+    if(MTG.bypass||!b.classList.contains('primary'))return;
+    if(/close|cancel|back|voltar/i.test(b.dataset.action||b.dataset.mt||''))return;
+    if(!MTG.snap.length)return;
+    try{if(gConflictLocal(b)){e.preventDefault();e.stopImmediatePropagation()}}catch(er){console.error(er)}
+  },true);
+})();
+/* ---------- B) duas janelas no mesmo aparelho ---------- */
+const STK='mt_state_stamp';
+const stRead=()=>{try{return localStorage.getItem(STK)||''}catch(e){return null}};
+let LAST=stRead();if(LAST===null)LAST='';
+function gStale(){
+  gDlg({title:'Os dados foram alterados em outra janela',html:'<p>Você tem o app aberto em outra janela ou aba, e ela salvou alterações agora há pouco.</p><p>Para não apagar o que foi salvo lá, esta janela precisa <b>recarregar</b>. O que você acabou de digitar aqui não foi gravado.</p>',btns:[{t:'Recarregar agora',cls:'primary',fn:()=>location.reload()}]});
+}
+{
+  const _p=persist;
+  persist=async function(){
+    if(window.__MT_DEMO_MODE||window.__MT_ACCOUNT_DELETING)return _p.apply(this,arguments);
+    const cur=stRead();
+    if(cur&&cur!==LAST){gStale();throw new Error('Os dados foram alterados em outra janela do app. Recarregue para continuar.')}
+    const r=await _p.apply(this,arguments);
+    try{LAST=state.updatedAt||'';localStorage.setItem(STK,LAST)}catch(e){}
+    if(Date.now()<MTG.userUntil)gSnapshot();
+    return r;
+  };
+  window.addEventListener('storage',e=>{
+    if(e.key!==STK||!e.newValue||e.newValue===LAST)return;
+    if(document.getElementById('mtConf'))return;
+    const old=document.getElementById('mtStaleBar');if(old)return;
+    const b=document.createElement('div');b.id='mtStaleBar';b.className='mtg-bar';
+    b.innerHTML='Outra janela do app alterou os dados. <button class="btn sm primary" type="button">Atualizar</button>';
+    b.querySelector('button').onclick=()=>location.reload();document.body.appendChild(b);
+  });
+}
+/* ---------- C) portal da equipe: confere na nuvem antes de gravar ---------- */
+const GP={
+  mt_agenda_salvar:{t:'eventos',id:a=>a.p_evento,on:a=>a.p_acao!=='criar',what:'este compromisso',ver:true},
+  mt_agenda_decidir:{t:'agenda_propostas',id:a=>a.p_proposta,what:'esta proposta',st:r=>r.situacao!=='pendente'?'Esta proposta já foi '+(r.situacao==='aprovada'?'aprovada':'recusada')+(r.decidida_em?' às '+gWhen(r.decidida_em):'')+'.':''},
+  mt_decidir_pagamento:{t:'pagamentos',id:a=>a.p_id,what:'este pagamento',st:r=>r.situacao!=='enviado'?'Este pagamento já foi '+(r.situacao==='validado'?'validado':'recusado')+(r.decidido_em?' às '+gWhen(r.decidido_em):'')+'.':''},
+  mt_fin_baixa:{t:'fin_lancamentos',id:a=>a.p_id,what:'este lançamento',ver:true,st:r=>r.status==='Pago'?'Este lançamento já foi baixado (pago)'+(r.editado_nome?' por '+r.editado_nome:'')+'.':r.status==='Cancelado'?'Este lançamento foi cancelado'+(r.editado_nome?' por '+r.editado_nome:'')+'.':''},
+  mt_fin_cancelar:{t:'fin_lancamentos',id:a=>a.p_id,what:'este lançamento',ver:true,st:r=>r.status==='Cancelado'?'Este lançamento já foi cancelado'+(r.editado_nome?' por '+r.editado_nome:'')+'.':r.status==='Pago'?'Este lançamento já foi pago'+(r.editado_nome?' por '+r.editado_nome:'')+'.':''},
+  mt_fin_decidir:{t:'fin_lancamentos',id:a=>a.p_id,what:'este lançamento',st:r=>r.aprovacao&&r.aprovacao!=='pendente'?'Este lançamento já foi '+(r.aprovacao==='ok'?'aprovado':'recusado')+'.':''},
+  mt_mod_salvar:{t:'mod_registros',id:a=>a.p_id,what:'este cadastro',ver:true},
+  mt_estoque_salvar:{t:'estoque_itens',id:a=>a.p_item,what:'este item de estoque',ver:true}
+};
+const gOpenP=()=>gOpen()||!!(window.mtCloud&&PT&&PT.evf);
+function gSee(t,rows){if(!Array.isArray(rows))return;rows.forEach(r=>{if(r&&r.id&&r.atualizado_em){const k=t+':'+r.id;if(!MTG.P.has(k)||!gOpenP())MTG.P.set(k,r.atualizado_em)}})}
+{
+  const _sel=api.select.bind(api),_rpc=api.rpc.bind(api);
+  api.select=async function(t,qs){const r=await _sel(t,qs);try{if(Object.values(GP).some(g=>g.t===t))gSee(t,r)}catch(e){}return r};
+  document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-mt]');if(b)MTG.lastBtn=b},true);
+  api.rpc=async function(n,args,anon){
+    const g=GP[n];
+    if(g&&!anon&&!MTG.pforce&&(!g.on||g.on(args||{}))){
+      const id=g.id(args||{});
+      if(id){
+        let row=null;try{const r=await _sel(g.t,'id=eq.'+encodeURIComponent(id)+'&select=*&limit=1');row=r&&r[0]}catch(e){row=null}
+        if(row){
+          const k=g.t+':'+id,seen=MTG.P.get(k);
+          const stMsg=g.st?g.st(row):'';
+          if(stMsg){gPortalDlg(g,row,stMsg,false,k);throw Object.assign(new Error('Este registro acabou de ser alterado. Veja como ficou.'),{code:'conflict'})}
+          if(g.ver&&seen&&row.atualizado_em&&row.atualizado_em!==seen){gPortalDlg(g,row,'',true,k);throw Object.assign(new Error('Este registro acabou de ser alterado. Veja como ficou.'),{code:'conflict'})}
+        }
+      }
+    }
+    let r;
+    if(g&&!anon&&!MTG.noSql){
+      const id=g.id(args||{}),k=id?g.t+':'+id:'',seen=(g.ver&&!MTG.pforce&&k)?MTG.P.get(k):null;
+      try{r=await _rpc('mt_guardar',{p_fn:n,p_args:args||{},p_esperado:seen||null})}
+      catch(e){
+        const m=String(e&&e.message||'');
+        if(/CONFLITO/.test(m)){
+          let row=null;try{const q=await _sel(g.t,'id=eq.'+encodeURIComponent(id)+'&select=*&limit=1');row=q&&q[0]}catch(x){}
+          const st=/CONFLITO\|(já decid[^|]*)/.exec(m);
+          gPortalDlg(g,row||{editado_nome:(m.split('|')[1]||'')},st?(g.what.charAt(0).toUpperCase()+g.what.slice(1)+' '+st[1]+'.'):'',!st&&!!g.ver,k);
+          throw Object.assign(new Error('Este registro acabou de ser alterado. Veja como ficou.'),{code:'conflict'});
+        }
+        if(e&&(e.status===404||/PGRST202|mt_guardar|schema cache/i.test(m+(e.code||'')))){MTG.noSql=true;r=await _rpc(n,args,anon)}
+        else throw e;
+      }
+    }else r=await _rpc(n,args,anon);
+    try{if(g){const id=g.id(args||{});if(id)MTG.P.delete(g.t+':'+id)}}catch(e){}
+    return r;
+  };
+}
+function gPortalDlg(g,row,msg,canForce,key){
+  const who=row.editado_nome||row.por_nome||'outra pessoa',at=gWhen(row.editado_em||row.atualizado_em);
+  const html=msg?`<p>${E(msg)}</p><p class="small muted">Atualize a tela para ver como ficou.</p>`:`<p>Alguém alterou ${E(g.what)} (<b>${E(who)}</b>${at?' às '+at:''}) enquanto você editava.</p><p class="small muted">Se você salvar agora, o que você digitou vale e a outra alteração pode se perder. Veja como ficou antes.</p>`;
+  const reload=async()=>{try{closeModal()}catch(e){}try{if(PT)PT.evf=null}catch(e){}MTG.P.delete(key);try{if(g.t==='fin_lancamentos'){await finLoad();await regLoad()}else if(g.t==='pagamentos'){await axLoad()}else if(g.t==='agenda_propostas'){await axLoad();await portalLoad(true);portalPaint()}else if(g.t==='mod_registros')await eqLoad();else if(g.t==='estoque_itens')await estLoad();else{await portalLoad(true);portalPaint()}}catch(e){console.error(e)}};
+  const btns=[{t:msg?'Atualizar a tela':'Ver como ficou',cls:'primary',fn:reload}];
+  if(canForce)btns.push({t:'Salvar mesmo assim',fn:()=>{MTG.P.delete(key);MTG.pforce=true;const b=MTG.lastBtn;try{if(b)b.click()}finally{setTimeout(()=>{MTG.pforce=false},1500)}}},{t:'Voltar',fn:()=>{}});
+  gDlg({title:msg?'Este registro já foi tratado':'Este registro acabou de ser alterado',html,btns});
+}
+
 window.mtCloud={guiaStart,EQM,EQ,FIN,EST,REG,REV,QR,TKP,PT,AX,portalPaint,configured,api,session:()=>S,profile:()=>MEM,pubEvents,pubFees,syncAll};
 })();
