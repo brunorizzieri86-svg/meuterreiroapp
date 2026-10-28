@@ -176,20 +176,34 @@ function screen(name,mod,extra){
   if(mod)CURMOD=mod;
   const m=MODS[CURMOD];
   const S_={
-    modules:()=>`<span class="eyebrow">Bem-vindo</span><h2>Como você quer entrar?</h2><p>Escolha o seu módulo. Cada um tem login e cadastro próprios.</p>
-      <div class="mtg-how"><button type="button" class="mtg-how-i act" data-mt="local"><b>Só neste aparelho (offline)</b><small>Para o Pai/Mãe que quer apenas o controle interno da casa. Sem internet, com 30 dias grátis.</small><em>Toque para entrar ›</em></button><button type="button" class="mtg-how-i on act" data-mt="module" data-a="pai_mae"><b>${MT_PLANO} (online)</b><small>Para a casa toda: o Pai/Mãe contrata e libera filhos, cambonos e consulentes.</small><em>Toque para entrar ou criar cadastro ›</em></button></div>
-      <div class="mtg-modules">${Object.keys(MODS).map(k=>`<button type="button" class="mtg-mod ${ls.get(K.mod)===k?'last':''}" data-mt="module" data-a="${k}" style="--mc:${MODS[k].cor}"><span class="mtg-ic">${ico(MODS[k].icon)}</span><span class="mtg-tx"><b>${MODS[k].label}</b><small>${MODS[k].desc}</small>${k==='pai_mae'?'<span class="mtg-req ok">Online ou só neste aparelho</span>':'<span class="mtg-req">Precisa do convite do Pai/Mãe</span>'}</span><span class="mtg-ch">›</span></button>`).join('')}</div>
-      <p class="mtg-note">Filhos, cambonos e consulentes só conseguem entrar com o convite do Pai/Mãe da casa, e só enquanto a casa estiver com a <b>${MT_PLANO}</b> ativa. Quem decide e libera tudo é o Pai/Mãe.</p>
-      <button type="button" class="btn mtg-about" data-mt="screen" data-a="sobre">Como funciona o MEU TERREIRO</button>
-      ${inApp()?`<button type="button" class="mtg-link center" data-mt="closegate">Voltar ao app</button>`:''}`,
+    modules:()=>{
+      const hasLocal=!!(typeof state!=='undefined'&&state&&state.settings&&state.settings.authConfigured),conn=!!(hasLocal&&state.settings.cloudEmail);
+      const primary=hasLocal&&!conn
+        ?`<button type="button" class="btn primary mtg-big" data-mt="local">${ico('lock')}Entrar na minha casa<small>Neste aparelho</small></button>`
+        :`<button type="button" class="btn primary mtg-big" data-mt="screen" data-a="login" data-any="1">${ico('lock')}Entrar<small>Pai/Mãe, filhos, cambonos e consulentes</small></button>`;
+      return `<span class="eyebrow">Bem-vindo(a)</span><h2>MEU TERREIRO</h2><p>A organização do seu terreiro, simples e no seu ritmo.</p>
+      <div class="mtg-one">${primary}
+      ${hasLocal?'':`<button type="button" class="btn mtg-big alt" data-mt="screen" data-a="signup" data-mod="pai_mae">Primeira vez: criar a conta da minha casa<small>Para o Pai/Mãe, com o código de liberação</small></button>`}
+      <button type="button" class="btn mtg-big alt" data-mt="screen" data-a="convite">Tenho um código de convite<small>Para filhos, cambonos e consulentes</small></button></div>
+      ${hasLocal?'':`<button type="button" class="mtg-link center" data-mt="local">Usar só neste aparelho, sem internet</button>`}
+      <button type="button" class="mtg-link center" data-mt="screen" data-a="sobre">Como funciona o MEU TERREIRO</button>
+      ${inApp()?`<button type="button" class="mtg-link center" data-mt="closegate">Voltar ao app</button>`:''}`},
+    convite:()=>`<span class="eyebrow">Convite</span><h2>Quem é você na casa?</h2><p>Escolha o seu papel. Você vai precisar do código que o Pai/Mãe enviou.</p>
+      <div class="mtg-one">${['filho','cambono','consulente'].map(k=>`<button type="button" class="btn mtg-big alt" data-mt="invite" data-a="${k}">${E(MODS[k].label)}<small>${E(MODS[k].desc)}</small></button>`).join('')}</div>
+      <button type="button" class="mtg-link center" data-mt="screen" data-a="modules">← Voltar</button>`,
     login:()=>{
+      if(CUR.extra==='any')return `<span class="eyebrow">Bem-vindo(a)</span><h2>Entrar</h2><p>Use o e-mail e a senha da sua conta. O app abre o seu módulo sozinho.</p>${configured()?'':`<div class="auth-error show">${UNAVAILABLE}</div>`}
+      <label>E-mail<input id="mt_email" type="email" autocomplete="username" inputmode="email" value="${E(ls.get('mt_last_email')||'')}"></label>${pwField('mt_pass','Senha','current-password')}${errBox()}
+      <button class="btn primary" data-mt="login" data-mt-primary>${ico('lock')}Entrar</button>
+      <div class="mtg-row"><button type="button" class="mtg-link" data-mt="screen" data-a="forgot">Esqueci minha senha</button></div>
+      <button type="button" class="mtg-link center" data-mt="screen" data-a="modules">← Voltar</button>`;
       const adm=CURMOD==='pai_mae';
       return `<span class="eyebrow">${E(m.label)}</span><h2>Entrar</h2>${adm?`<div class="mtg-lead"><b>${MT_PLANO} · online</b><small>Entre com a conta da casa para liberar acessos, publicar a agenda, validar mensalidades e enviar orientações.</small></div><div class="mtg-note"><b>Atenção:</b> esta é a conta <b>online</b>, diferente do acesso local deste aparelho. O e-mail e a senha do acesso local <b>não valem aqui</b>. Se ainda não criou a conta online, toque em <b>Criar meu cadastro</b> e use o código de liberação do ${MT_PLANO}.</div>`:`<p>${E(m.desc)}</p>`}${configured()?'':`<div class="auth-error show">${UNAVAILABLE}</div>`}
       <label>E-mail<input id="mt_email" type="email" autocomplete="username" inputmode="email" value="${E(ls.get('mt_last_email')||'')}"></label>${pwField('mt_pass','Senha','current-password')}${errBox()}
       <button class="btn primary" data-mt="login" data-mt-primary>${ico('lock')}Entrar como ${E(m.label)}</button>
       <div class="mtg-row"><button type="button" class="mtg-link" data-mt="screen" data-a="signup">Criar meu cadastro</button><button type="button" class="mtg-link" data-mt="screen" data-a="forgot">Esqueci minha senha</button></div>
       <p class="mtg-help">${adm?`<b>Primeira vez?</b> Use o botão de cadastro e o código de liberação recebido ao contratar a ${MT_PLANO}. `:`<b>Primeira vez?</b> Peça o código de convite ao Pai/Mãe da casa, que precisa estar com a ${MT_PLANO} ativa. `}<b>Esqueceu a senha?</b> Enviamos um link de redefinição para o seu e-mail (não é enviado por WhatsApp).</p>
-      ${adm?`<button type="button" class="btn mtg-about" data-mt="screen" data-a="sobre">Como funciona o MEU TERREIRO</button><div class="mtg-off"><h3>Somente neste aparelho (offline)</h3><p class="small muted" style="margin:0">Para quem quer usar o app só no controle interno da casa.</p><ul><li>Funciona sem internet; os dados ficam guardados neste aparelho.</li><li>30 dias grátis para testar tudo. Depois, é preciso ativar o plano PRO.</li><li>Não libera acesso online para filhos, cambonos e consulentes.</li><li>Faça backup com frequência (Configurações → Backup).</li></ul><button type="button" class="mtg-offbtn" data-mt="local"><span>Entrar no app offline<small>Usar somente neste aparelho</small></span><i aria-hidden="true">›</i></button>${MT_CONTATO.whatsapp?`<div class="mtg-ask"><span>Já quer o plano PRO?</span><select class="mtg-plan" aria-label="Plano"><option value="1">1 mês</option><option value="6" selected>6 meses</option><option value="12">12 meses</option></select><button type="button" class="btn sm" data-mt="ask" data-k="pro">Quero assinar o PRO (WhatsApp)</button></div>`:''}</div>`:''}
+      ${adm?`<button type="button" class="btn mtg-about" data-mt="screen" data-a="sobre">Como funciona o MEU TERREIRO</button><div class="mtg-off"><h3>Somente neste aparelho (offline)</h3><p class="small muted" style="margin:0">Para quem quer usar o app só no controle interno da casa.</p><ul><li>Funciona sem internet; os dados ficam guardados neste aparelho.</li><li>60 dias grátis para testar tudo. Depois, é preciso ativar o plano PRO.</li><li>Não libera acesso online para filhos, cambonos e consulentes.</li><li>Faça backup com frequência (Configurações → Backup).</li></ul><button type="button" class="mtg-offbtn" data-mt="local"><span>Entrar no app offline<small>Usar somente neste aparelho</small></span><i aria-hidden="true">›</i></button>${MT_CONTATO.whatsapp?`<div class="mtg-ask"><span>Já quer o plano PRO?</span><select class="mtg-plan" aria-label="Plano"><option value="1">1 mês</option><option value="6" selected>6 meses</option><option value="12">12 meses</option></select><button type="button" class="btn sm" data-mt="ask" data-k="pro">Quero assinar o PRO (WhatsApp)</button></div>`:''}</div>`:''}
       ${back('modules')}`},
     signup:()=>{
       const adm=CURMOD==='pai_mae',cons=CURMOD==='consulente';
@@ -202,7 +216,7 @@ function screen(name,mod,extra){
       <label>E-mail<input id="mt_email" type="email" autocomplete="email" inputmode="email"></label>${pwField('mt_pass','Crie uma senha (mínimo 6 caracteres)','new-password')}${pwField('mt_pass2','Confirme a senha','new-password')}${legalCheck()}${errBox()}
       <button class="btn primary" data-mt="signup" data-mt-primary>${ico('lock')}Criar cadastro</button>
       <div class="mtg-row"><button type="button" class="mtg-link" data-mt="screen" data-a="login">Já possuo cadastro · Entrar</button></div>
-      ${adm?`<div class="mtg-or">ou</div><div class="mtg-off" style="margin-top:6px"><h3>Não quer a ${MT_PLANO}?</h3><p class="small muted" style="margin:0 0 10px">Use o app só neste aparelho, sem código e sem internet, com 30 dias grátis. Você poderá contratar a ${MT_PLANO} depois.</p><button type="button" class="mtg-offbtn" data-mt="local"><span>Entrar no app offline<small>Usar somente neste aparelho</small></span><i aria-hidden="true">›</i></button></div>`:''}
+      ${adm?`<div class="mtg-or">ou</div><div class="mtg-off" style="margin-top:6px"><h3>Não quer a ${MT_PLANO}?</h3><p class="small muted" style="margin:0 0 10px">Use o app só neste aparelho, sem código e sem internet, com 60 dias grátis. Você poderá contratar a ${MT_PLANO} depois.</p><button type="button" class="mtg-offbtn" data-mt="local"><span>Entrar no app offline<small>Usar somente neste aparelho</small></span><i aria-hidden="true">›</i></button></div>`:''}
       ${back('login','← Já tenho cadastro')}`;
     },
     forgot:()=>`<span class="eyebrow">${E(m.label)}</span><h2>Recuperar senha</h2><p>Informe o e-mail do cadastro. Enviaremos um link para criar uma nova senha, <b>por e-mail</b> (não por WhatsApp). Confira também a caixa de spam.</p>
@@ -213,10 +227,10 @@ function screen(name,mod,extra){
     sobre:()=>`<span class="eyebrow">Guia rápido</span><h2>Como funciona o MEU TERREIRO</h2>
       <p>Um app para organizar a sua casa de Umbanda: pessoas, agenda de giras, financeiro, mensalidades, trabalhos espirituais, mensagens e backup.</p>
       <div class="mtg-explain"><h3>Duas formas de usar</h3>
-        <div class="mtg-how"><div class="mtg-how-i"><b>Somente neste aparelho (offline)</b><small>Controle completo da casa pelo Pai/Mãe, sem internet. Os dados ficam guardados neste aparelho.<br><b>30 dias grátis</b>; depois, plano PRO de 1, 6 ou 12 meses.</small></div><div class="mtg-how-i on"><b>${MT_PLANO} (online)</b><small>Tudo do modo offline <b>mais</b> acesso próprio para filhos, cambonos e consulentes.<br>Contratado por <b>1, 6 ou 12 meses</b> e liberado por um código.</small></div></div></div>
+        <div class="mtg-how"><div class="mtg-how-i"><b>Somente neste aparelho (offline)</b><small>Controle completo da casa pelo Pai/Mãe, sem internet. Os dados ficam guardados neste aparelho.<br><b>60 dias grátis</b>; depois, plano PRO de 1, 6 ou 12 meses.</small></div><div class="mtg-how-i on"><b>${MT_PLANO} (online)</b><small>Tudo do modo offline <b>mais</b> acesso próprio para filhos, cambonos e consulentes.<br>Contratado por <b>1, 6 ou 12 meses</b> e liberado por um código.</small></div></div></div>
       <div class="mtg-explain"><h3>O que cada módulo traz</h3><ul><li><b>Pai/Mãe da casa:</b> pessoas, agenda, financeiro, acessos, avisos, orientações e banhos.</li><li><b>Filhos da casa:</b> agenda e calendário, mensalidade (envia o comprovante), avisos e o próprio cadastro.</li><li><b>Cambonos e apoio:</b> agenda e materiais dos trabalhos, mensalidade e avisos.</li><li><b>Consulentes:</b> dias de gira abertos, orientações e banhos enviados individualmente, e avisos.</li></ul></div>
       <div class="mtg-explain"><h3>Como convidar as pessoas</h3><ul><li>O Pai/Mãe abre <b>Acessos &amp; Nuvem</b> e envia o convite pelo WhatsApp.</li><li>A pessoa toca no link, preenche os dados e <b>cria a própria senha</b>.</li><li>O Pai/Mãe aprova o cadastro e pode <b>desativar ou remover</b> o acesso quando quiser.</li><li>Na mensalidade, o filho envia o comprovante e o Pai/Mãe valida: o lançamento entra no financeiro sozinho.</li></ul></div>
-      <div class="mtg-explain"><h3>Planos e códigos</h3><ul><li><b>${MT_PLANO}:</b> código de liberação (MT-XXXX-XXXX), de uso único. Renova com um novo código.</li><li><b>PRO (aparelho):</b> código ligado ao ID do aparelho, para continuar usando o app neste aparelho depois dos 30 dias grátis.</li><li>Se o ${MT_PLANO} vencer, filhos, cambonos e consulentes ficam com acesso suspenso; o app do Pai/Mãe continua funcionando.</li></ul></div>
+      <div class="mtg-explain"><h3>Planos e códigos</h3><ul><li><b>${MT_PLANO}:</b> código de liberação (MT-XXXX-XXXX), de uso único. Renova com um novo código.</li><li><b>PRO (aparelho):</b> código ligado ao ID do aparelho, para continuar usando o app neste aparelho depois dos 60 dias grátis.</li><li>Se o ${MT_PLANO} vencer, filhos, cambonos e consulentes ficam com acesso suspenso; o app do Pai/Mãe continua funcionando.</li></ul></div>
       ${MT_CONTATO.whatsapp?`<div class="mtg-code-help"><b>Quer assinar?</b> Escolha o plano e fale com a gente pelo WhatsApp ${E(MT_CONTATO.exibe||'')}.<div class="mtg-ask"><select class="mtg-plan" aria-label="Plano"><option value="1">1 mês</option><option value="6" selected>6 meses</option><option value="12">12 meses</option></select><button type="button" class="btn sm primary" data-mt="ask" data-k="conectado">Quero assinar o ${MT_PLANO}</button><button type="button" class="btn sm" data-mt="ask" data-k="pro">Quero assinar o PRO</button></div></div>`:''}
       <button type="button" class="btn primary" data-mt="screen" data-a="${SOBRE_BACK}">← Voltar</button>`,
     escolha:()=>`<span class="eyebrow">Convite recebido</span><h2>Você entra como…</h2><p>A casa convidou você. Escolha a sua função para criar o cadastro. O Pai/Mãe da casa confirma o seu acesso.</p>
@@ -268,7 +282,7 @@ async function doLogin(btn){
   if(!pass)return bad('mt_pass','Senha: digite a senha do seu cadastro.');
   if(!configured()){showErr(UNAVAILABLE);return}
   busy(btn,true,'Entrando…');
-  try{await api.signIn(email,pass);ls.set('mt_last_email',email);ls.set(K.mod,CURMOD);await enter({pass,viaMod:CURMOD})}
+  try{await api.signIn(email,pass);ls.set('mt_last_email',email);if(CUR.extra!=='any')ls.set(K.mod,CURMOD);await enter({pass,viaMod:CUR.extra==='any'?undefined:CURMOD})}
   catch(e){showErr(e.message)}finally{busy(btn,false)}
 }
 function markBad(id,msg){
@@ -401,6 +415,7 @@ async function openAdmin(p,o={}){
   toast('✓ Bem-vindo(a), '+p.nome.split(' ')[0]+'.');
   try{
     AX.plano=await api.rpc('mt_meu_plano');AX.expired=!!(AX.plano&&AX.plano<today());
+    try{if(state.settings.cloudPlanUntil!==(AX.plano||'')){state.settings.cloudPlanUntil=AX.plano||'';await persist(false);render()}}catch(e){}
     const d=AX.plano?Math.ceil((new Date(AX.plano+'T23:59:59')-new Date())/86400000):99;
     if(AX.expired)toast('⚠ O plano online da casa venceu. Renove em Acessos & Nuvem.');else if(d<=15)toast('⏳ O plano online vence em '+Math.max(d,0)+' dia(s). Renove em Acessos & Nuvem.');
   }catch(e){}
@@ -1239,7 +1254,8 @@ document.addEventListener('click',async e=>{
   e.preventDefault();
   try{
     switch(a){
-      case 'screen':screen(v,v==='modules'?undefined:CURMOD);break;
+      case 'screen':if(v==='login'&&t.dataset.any){CURMOD='pai_mae';screen('login','pai_mae','any')}else if(v==='signup'&&t.dataset.mod){ls.set(K.mod,t.dataset.mod);screen('signup',t.dataset.mod)}else screen(v,v==='modules'||v==='convite'?undefined:CURMOD);break;
+      case 'invite':ls.set(K.mod,v);screen('signup',v);break;
       case 'module':ls.set(K.mod,v);screen('login',v);break;
       case 'local':showLocal();break;
       case 'gotologin':{const em=(document.getElementById('mt_email')?.value||'').trim();if(em)ls.set('mt_last_email',em);screen('login');break}
@@ -2909,5 +2925,392 @@ function gPortalDlg(g,row,msg,canForce,key){
   gDlg({title:msg?'Este registro já foi tratado':'Este registro acabou de ser alterado',html,btns});
 }
 
-window.mtCloud={guiaStart,EQM,EQ,FIN,EST,REG,REV,QR,TKP,PT,AX,portalPaint,configured,api,session:()=>S,profile:()=>MEM,pubEvents,pubFees,syncAll};
+/* ======================================================================
+   V0.14.0.0 · CONECTAR MINHA CASA (assistente para quem já usa o app)
+   ====================================================================== */
+const CN={busy:false};
+const cnConnected=()=>!!(MEM&&MEM.papel==='pai_mae')||!!(state&&state.settings&&state.settings.cloudEmail);
+function cnCardHTML(){
+  if(!configured()||cnConnected()||window.__MT_DEMO_MODE)return '';
+  return `<div class="mtcn-card"><div class="mtcn-t"><b>Conecte a sua casa ao ${MT_PLANO}</b><small>Compartilhe a agenda, as giras, as mensalidades e as orientações com filhos, cambonos e consulentes. Seus dados continuam aqui, nada se perde.</small></div><div class="mtcn-b"><button class="btn primary" data-action="mt-connect-open">Conectar minha casa</button></div></div>`;
+}
+{
+  const _t=window.mtTrialNoticeHTML;
+  if(typeof _t==='function')window.mtTrialNoticeHTML=function(){let h='';try{h=_t.apply(this,arguments)||''}catch(e){}return cnCardHTML()+h};
+}
+function cnOpen(){
+  if(!state||!state.settings){return}
+  const h=state.house||{},st=state.settings,em=/@/.test(st.loginName||'')?st.loginName:(ls.get('mt_last_email')||'');
+  const name=(h.name&&h.name!=='MEU TERREIRO')?h.name:'';
+  showModal('Conectar minha casa',`<div id="mtcn">
+   <div class="mtg-explain" style="margin-bottom:10px"><h3>Como vai ser</h3><ul><li>Você cria a conta online da casa com o código que recebeu.</li><li>Tudo que já está neste aparelho continua aqui.</li><li>Depois você convida os filhos e cambonos com um código de convite.</li></ul></div>
+   <div class="form-grid">
+    <label class="full">1. Código de liberação<input id="cn_lib" autocapitalize="characters" autocomplete="off" maxlength="14" placeholder="MT-XXXX-XXXX" style="text-transform:uppercase;letter-spacing:.1em"></label>
+    <div id="cn_lib_ok" class="mtg-casa full"></div>
+    <div class="full"><button type="button" class="btn sm" data-action="mt-connect-wa">Ainda não tenho o código · pedir pelo WhatsApp</button></div>
+    <label class="full">2. Nome do responsável<input id="cn_nome" autocomplete="name" value="${E(h.responsible||'')}"></label>
+    <label class="full">Nome da casa<input id="cn_casa" value="${E(name)}" placeholder="Ex.: Casa de Oxum"></label>
+    <label>WhatsApp (com DDD)<input id="cn_tel" inputmode="tel" autocomplete="tel" value="${E(h.whatsapp||'')}" placeholder="(11) 99999-9999"></label>
+    <label>3. E-mail da conta<input id="cn_email" type="email" autocomplete="username" value="${E(em)}"></label>
+    ${pwField('cn_pass','Senha da conta online (mínimo 6)','new-password')}
+    ${pwField('cn_pass2','Repita a senha','new-password')}
+    <label class="full mtg-chk"><input type="checkbox" id="cn_legal"> Li e aceito os <a href="termos.html" target="_blank" rel="noopener">Termos de Uso</a> e a <a href="privacidade.html" target="_blank" rel="noopener">Política de Privacidade</a>.</label>
+   </div>
+   <p class="small muted">A senha online é nova e só serve para a conta da nuvem. A senha de entrada deste aparelho continua a mesma.</p></div>`,
+   `<button class="btn" data-action="close-modal">Agora não</button><button class="btn primary" data-action="mt-connect-go">Conectar minha casa</button>`,true);
+  setTimeout(()=>{try{const i=document.getElementById('cn_lib');let t;i.addEventListener('input',()=>{i.value=i.value.toUpperCase().replace(/[^A-Z0-9-]/g,'');const o=document.getElementById('cn_lib_ok');o.textContent='';o.className='mtg-casa full';const n=i.value.replace(/-/g,'');if(n.length<10)return;clearTimeout(t);t=setTimeout(async()=>{try{const ok=await api.rpc('mt_validar_liberacao',{p_codigo:i.value},true);o.textContent=ok?'✓ Código válido.':'Código inválido ou já usado.';o.className='mtg-casa full '+(ok?'ok':'bad')}catch(e){}},300)})}catch(e){}},50);
+}
+function cnBad(id,msg){if(typeof fieldBad==='function')fieldBad(id,msg);else toast('⚠ '+msg);return false}
+async function cnGo(btn){
+  if(CN.busy)return;
+  const lib=val('cn_lib'),nome=val('cn_nome'),casa=val('cn_casa'),tel=val('cn_tel'),email=val('cn_email').toLowerCase(),p1=(document.getElementById('cn_pass')||{}).value||'',p2=(document.getElementById('cn_pass2')||{}).value||'';
+  if(lib.replace(/-/g,'').length<10)return cnBad('cn_lib','Digite o código de liberação completo (MT-XXXX-XXXX). Se ainda não tem, toque em "pedir pelo WhatsApp".');
+  if(nome.length<3)return cnBad('cn_nome','Informe o nome do responsável.');
+  if(casa.length<2)return cnBad('cn_casa','Informe o nome da casa.');
+  if(digits(tel).length<10||digits(tel).length>13)return cnBad('cn_tel','WhatsApp com DDD. Ex.: (11) 99999-9999.');
+  if(!isEmail(email))return cnBad('cn_email','Informe um e-mail válido. Ex.: nome@gmail.com.');
+  if(p1.length<6)return cnBad('cn_pass','A senha precisa ter pelo menos 6 caracteres.');
+  if(p1!==p2)return cnBad('cn_pass2','As duas senhas precisam ser iguais.');
+  if(!document.getElementById('cn_legal').checked)return cnBad('cn_legal','Marque que leu e aceita os Termos e a Política de Privacidade.');
+  CN.busy=true;busy(btn,true,'Conectando…');
+  try{
+    const ok=await api.rpc('mt_validar_liberacao',{p_codigo:lib},true);
+    if(!ok){cnBad('cn_lib','Código inválido ou já usado. Confira com quem enviou ou peça outro.');return}
+    const meta={mt_papel:'pai_mae',mt_nome:nome,mt_telefone:tel,mt_aceite:new Date().toISOString(),mt_casa:casa,mt_liberacao:lib};
+    const r=await api.signUp(email,p1,meta);
+    ls.set('mt_last_email',email);ls.set(K.mod,'pai_mae');CURMOD='pai_mae';
+    if(state&&state.settings){state.settings.cloudEmail=email;state.house=state.house||{};if(!state.house.responsible)state.house.responsible=nome;if(!state.house.whatsapp)state.house.whatsapp=tel;try{await persist(false)}catch(e){}}
+    if(r&&r.session){closeModal();await enter({pass:p1,viaMod:'pai_mae',fresh:true,legal:true});toast('✓ Casa conectada! Agora convide os filhos em Acessos & Nuvem.')}
+    else{closeModal();showModal('Falta só confirmar o e-mail',`<p>Enviamos uma mensagem para <b>${E(email)}</b>. Abra, toque no link de confirmação (olhe também o spam) e depois volte aqui.</p><p>Depois de confirmar: toque em <b>Conectar minha casa</b> de novo? <b>Não precisa.</b> Basta sair do app, escolher <b>Pai/Mãe da casa</b> e <b>Entrar</b> com este e-mail e a senha online que você acabou de criar.</p>`,`<button class="btn primary" data-action="close-modal">Entendi</button>`)}
+  }catch(e){
+    const m=String(e&&e.message||'');
+    if(e&&(e.code==='user_already_exists'||/já tem cadastro|already/i.test(m)))cnBad('cn_email','Este e-mail já tem conta online. Saia do app, escolha Pai/Mãe da casa e use Entrar.');
+    else toast('⚠ '+userErr(m))
+  }finally{CN.busy=false;busy(btn,false)}
+}
+function cnWhats(){
+  const h=(state&&state.house)||{},t=encodeURIComponent('Olá! Quero conectar a minha casa'+(h.name&&h.name!=='MEU TERREIRO'?' ('+h.name+')':'')+' ao Terreiro Conectado do MEU TERREIRO. Pode me enviar o código de liberação?');
+  window.open('https://wa.me/'+(typeof MT_WHATSAPP!=='undefined'?MT_WHATSAPP:'5511953525141')+'?text='+t,'_blank');
+}
+document.addEventListener('click',e=>{
+  const a=e.target.closest&&e.target.closest('[data-action^="mt-connect-"]');if(!a)return;
+  e.preventDefault();e.stopImmediatePropagation();
+  const k=a.dataset.action;if(k==='mt-connect-open')cnOpen();else if(k==='mt-connect-go')cnGo(a);else if(k==='mt-connect-wa')cnWhats();
+},true);
+/* o plano online da casa vale como licença do app (um plano só) */
+{
+  const _ls=window.mtLicenseStatus;
+  if(typeof _ls==='function')window.mtLicenseStatus=function(){
+    try{const c=state&&state.settings&&state.settings.cloudPlanUntil;if(c){const t=new Date(c+'T23:59:59').getTime();if(t>Date.now())return {kind:'pro',cloud:true,label:MT_PLANO+' ativo',expiresAt:new Date(t).toISOString(),days:Math.max(1,Math.ceil((t-Date.now())/86400000))}}}catch(e){}
+    return _ls.apply(this,arguments);
+  };
+}
+
+/* ======================================================================
+   V0.15.0.0 · RENOVAÇÃO: aviso de vencimento leva direto ao botão de renovar
+   ====================================================================== */
+const cnDays=()=>{const u=state&&state.settings&&state.settings.cloudPlanUntil;if(!u)return null;return Math.ceil((new Date(u+'T23:59:59')-new Date())/86400000)};
+function cnRenewBanner(){
+  if(!cnConnected()||!configured())return '';
+  const d=cnDays();if(d===null||d>15)return '';
+  if(d<0){if(typeof mtLicenseStatus==='function'&&mtLicenseStatus().kind==='expired')return '';return `<div class="restrict-banner"><b>O plano online da casa venceu</b><p>Filhos, cambonos e consulentes estão sem acesso online. Seus dados continuam guardados.</p><div class="row"><button class="btn primary" data-action="mt-renew-open">Renovar agora</button><button class="btn whatsapp-cta" data-action="mt-renew-wa">Pedir código no WhatsApp</button></div></div>`}
+  return `<div class="trial-warning ${d<=3?'urgent':''}"><b>${d<=0?'O plano online vence hoje':'O plano online vence em '+d+' dia(s)'}</b><small>Renove antes do vencimento para ninguém ficar sem acesso.</small><div style="margin-top:9px"><button class="btn sm primary" data-action="mt-renew-open">Renovar agora</button> <button class="btn sm" data-action="mt-renew-wa">Pedir código no WhatsApp</button></div></div>`;
+}
+{
+  const _t2=window.mtTrialNoticeHTML;
+  window.mtTrialNoticeHTML=function(){let h='';try{h=_t2.apply(this,arguments)||''}catch(e){}return cnRenewBanner()+h};
+}
+function cnRenewOpen(){
+  if(!cnConnected()){cnOpen();return}
+  const u=state.settings.cloudPlanUntil,d=cnDays();
+  showModal('Renovar o plano da casa',`<div id="mtrn"><div class="notice">${u?(d<0?'O plano venceu em ':'O plano vale até ')+'<b>'+E(brDate(u))+'</b>.':'Sem data de validade registrada.'}</div>
+   <div class="form-grid"><label class="full">Código de liberação para renovar<input id="rn2_cod" autocapitalize="characters" autocomplete="off" maxlength="14" placeholder="MT-XXXX-XXXX" style="text-transform:uppercase;letter-spacing:.1em"></label></div>
+   <p class="small muted">O prazo do código é somado à validade atual. Ainda não tem o código?</p><button type="button" class="btn sm" data-action="mt-renew-wa">Pedir código pelo WhatsApp</button></div>`,
+   `<button class="btn" data-action="close-modal">Agora não</button><button class="btn primary" data-action="mt-renew-go">Renovar plano</button>`);
+}
+async function cnRenewGo(btn){
+  const c=val('rn2_cod');
+  if(c.replace(/-/g,'').length<10)return cnBad('rn2_cod','Digite o código completo, no formato MT-XXXX-XXXX.');
+  busy(btn,true,'Renovando…');
+  try{
+    const nv=await api.rpc('mt_renovar_plano',{p_codigo:c});
+    state.settings.cloudPlanUntil=String(nv||'');AX.plano=state.settings.cloudPlanUntil;AX.expired=false;AX.membros=null;
+    try{await persist(false)}catch(e){}
+    closeModal();toast('✓ Plano renovado até '+brDate(nv)+'.');try{render()}catch(e){}try{await axLoad()}catch(e){}syncSoon(300);
+  }catch(e){
+    const m=String(e&&e.message||'');
+    if(e&&(e.code==='nosession'||e.status===401))cnBad('rn2_cod','Sua conta online não está aberta. Saia do app, entre de novo e renove.');
+    else cnBad('rn2_cod',userErr(m)||m);
+  }finally{busy(btn,false)}
+}
+function cnRenewWa(){
+  const h=(state&&state.house)||{},d=cnDays(),t=encodeURIComponent('Olá! Quero renovar o plano Terreiro Conectado da minha casa'+(h.name&&h.name!=='MEU TERREIRO'?' ('+h.name+')':'')+(d!==null?(d<0?' (venceu há '+(-d)+' dia(s))':' (vence em '+d+' dia(s))'):'')+'. Pode me enviar o código de renovação?');
+  window.open('https://wa.me/'+(typeof MT_WHATSAPP!=='undefined'?MT_WHATSAPP:'5511953525141')+'?text='+t,'_blank');
+}
+document.addEventListener('click',e=>{
+  const a=e.target.closest&&e.target.closest('[data-action^="mt-renew-"]');if(!a)return;
+  e.preventDefault();e.stopImmediatePropagation();
+  const k=a.dataset.action;if(k==='mt-renew-open')cnRenewOpen();else if(k==='mt-renew-go')cnRenewGo(a);else if(k==='mt-renew-wa')cnRenewWa();
+},true);
+/* aviso de vencimento também ao abrir o app (toast leva ao mesmo lugar) */
+
+/* ======================================================================
+   V0.17.0.0 · IMPLANTAÇÃO GUIADA (casa grande): planilha, convites em lote, passo a passo
+   ====================================================================== */
+const IMP={rows:[],kind:'Mensalista',text:''};
+const impNorm=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/\s+/g,' ').trim();
+function impParse(text){
+  const t=String(text||'').replace(/\r/g,'').replace(/^﻿/,'').split('\n').filter(l=>l.trim());
+  if(!t.length)return [];
+  const first=t[0],tabs=(first.match(/\t/g)||[]).length,semi=(first.match(/;/g)||[]).length,com=(first.match(/,/g)||[]).length;
+  const sep=tabs>0&&tabs>=semi&&tabs>=com?'\t':semi>=com&&semi>0?';':com>0?',':'\t';
+  const split=l=>{const out=[];let cur='',q=false;for(let i=0;i<l.length;i++){const c=l[i];if(c==='"'){if(q&&l[i+1]==='"'){cur+='"';i++}else q=!q}else if(c===sep&&!q){out.push(cur.trim());cur=''}else cur+=c}out.push(cur.trim());return out};
+  return t.map(split);
+}
+function impMapHeader(h){
+  const m={};h.forEach((c,i)=>{const n=impNorm(c);
+    if(/^(nome|name|nome completo|filho|pessoa)$/.test(n))m.name=i;
+    else if(/(whats|celular|telefone|fone|tel$|contato)/.test(n))m.phone=i;
+    else if(/(nasc|aniversario|data de nasc)/.test(n))m.birth=i;
+    else if(/(mail)/.test(n))m.email=i;
+    else if(/(grupo|corrente|linha|falange)/.test(n))m.group=i;
+    else if(/(tipo|funcao|cargo|papel)/.test(n))m.kind=i});
+  return m.name!==undefined?m:null;
+}
+function impDate(v){
+  v=String(v||'').trim();let m=/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{2,4})$/.exec(v);
+  if(m){let y=+m[3];if(y<100)y+=y>30?1900:2000;return y+'-'+String(+m[2]).padStart(2,'0')+'-'+String(+m[1]).padStart(2,'0')}
+  m=/^(\d{4})-(\d{2})-(\d{2})/.exec(v);return m?m[0]:'';
+}
+function impKindOf(txt,def){
+  const n=impNorm(txt);if(!n)return {kind:def,role:''};
+  if(/consul/.test(n))return {kind:'Consulente',role:''};
+  if(/convid/.test(n))return {kind:'Convidado',role:''};
+  if(/cambon/.test(n))return {kind:'Mensalista',role:'Cambono'};
+  if(/(filh|mensal|medium|m[eé]dium)/.test(n))return {kind:'Mensalista',role:'Filho(a) da Casa'};
+  return {kind:def,role:''};
+}
+function impBuild(text,defKind){
+  const grid=impParse(text);if(!grid.length)return [];
+  let map=impMapHeader(grid[0]),body=map?grid.slice(1):grid;
+  const exist=state.members||[],byName=new Map(exist.map(m=>[impNorm(m.name),m])),byPhone=new Map(exist.filter(m=>digits(m.whatsapp||m.phone).length>=8).map(m=>[digits(m.whatsapp||m.phone).slice(-9),m]));
+  const seen=new Set(),rows=[];
+  body.forEach((c,idx)=>{
+    let name='',phone='',email='',birth='',group='',ktxt='';
+    if(map){name=c[map.name]||'';phone=map.phone!==undefined?c[map.phone]:'';email=map.email!==undefined?c[map.email]:'';birth=map.birth!==undefined?impDate(c[map.birth]):'';group=map.group!==undefined?c[map.group]:'';ktxt=map.kind!==undefined?c[map.kind]:''}
+    else c.forEach(x=>{x=String(x||'').trim();if(!x)return;if(/@/.test(x))email=email||x;else if(impDate(x))birth=birth||impDate(x);else if(digits(x).length>=8&&!/[a-z]/i.test(x.replace(/[()\-\s+.]/g,'')))phone=phone||x;else if(!name)name=x;else group=group||x});
+    name=String(name||'').trim();
+    const ph=ctiPhone(phone),nm=impNorm(name),k=impKindOf(ktxt,defKind);
+    let note='',sel=true,bad=false;
+    if(!name){note='Sem nome';sel=false;bad=true}
+    else if(byName.has(nm)||(ph&&byPhone.has(ph.slice(-9)))){note='Já cadastrado';sel=false}
+    else if(seen.has(nm)||(ph&&seen.has('p'+ph.slice(-9)))){note='Repetido na planilha';sel=false}
+    else if(phone&&!ph){note='Telefone fora do padrão: entra sem telefone'}
+    if(name){seen.add(nm);if(ph)seen.add('p'+ph.slice(-9))}
+    rows.push({id:'i'+idx,name,phone:ph,email:String(email||'').trim(),birth,group:String(group||'').trim(),kind:k.kind,role:k.role,note,sel,bad});
+  });
+  return rows;
+}
+function impOpen(){
+  showModal('Importar pessoas da planilha',`<div id="mtimp">
+   <div class="mtg-explain" style="margin-bottom:10px"><h3>Em 3 passos</h3><ol style="margin:6px 0 0 18px;padding:0"><li>Abra a sua planilha (Excel ou Google Planilhas).</li><li>Selecione as linhas com <b>Nome</b> e, se tiver, <b>WhatsApp</b>, Nascimento, E-mail, Grupo e Tipo. Copie.</li><li>Cole na caixa abaixo (ou escolha o arquivo .csv) e toque em <b>Conferir lista</b>.</li></ol></div>
+   <label class="full">Cole aqui<textarea id="imp_text" rows="6" placeholder="Maria Silva\t(11) 99999-1234\t12/05/1985&#10;João Souza\t11 98888-7777"></textarea></label>
+   <div class="form-grid"><label>Ou escolha o arquivo<input id="imp_file" type="file" accept=".csv,.tsv,.txt,text/csv,text/plain"></label>
+   <label>Quando a planilha não disser o tipo, cadastrar como<select id="imp_kind">${(typeof MT_KINDS!=='undefined'?MT_KINDS:['Mensalista','Consulente','Convidado','Outro']).map(k=>`<option ${k===IMP.kind?'selected':''}>${E(k)}</option>`).join('')}</select></label></div>
+   <p class="small muted">Nada sai deste aparelho. Antes de importar você confere a lista; quem já está cadastrado fica de fora para não duplicar.</p>
+   <button type="button" class="btn sm" data-action="mt-imp-model">Baixar planilha modelo</button></div>`,
+   `<button class="btn" data-action="close-modal">Cancelar</button><button class="btn primary" data-action="mt-imp-check">Conferir lista</button>`,true);
+  setTimeout(()=>{const f=document.getElementById('imp_file');if(f)f.addEventListener('change',()=>{const fl=f.files&&f.files[0];if(!fl)return;const r=new FileReader();r.onload=()=>{document.getElementById('imp_text').value=String(r.result||'')};r.readAsText(fl,'utf-8')})},50);
+}
+function impCheck(){
+  const txt=(document.getElementById('imp_text')||{}).value||IMP.text,kind=(document.getElementById('imp_kind')||{}).value||IMP.kind;
+  if(!txt.trim())return cnBad('imp_text','Cole a lista ou escolha o arquivo primeiro.');
+  IMP.text=txt;IMP.kind=kind;IMP.rows=impBuild(txt,kind);
+  if(!IMP.rows.length)return cnBad('imp_text','Não encontrei nenhuma pessoa. Confira se colou as linhas com os nomes.');
+  impList();
+}
+function impCounts(){
+  const n=IMP.rows.filter(r=>r.sel).length;
+  const b=document.getElementById('imp_go');if(b){b.textContent=n?`Importar ${n} ${n===1?'pessoa':'pessoas'}`:'Marque quem importar';b.disabled=!n}
+  const s=document.getElementById('imp_sum');if(s)s.textContent=`${n} marcadas de ${IMP.rows.length} linhas`;
+}
+function impList(){
+  const R=IMP.rows,ok=R.filter(r=>!r.note||r.note.startsWith('Telefone')).length,skip=R.length-ok;
+  showModal('Conferir a lista',`<div id="mtimp"><div class="notice"><b>${ok}</b> pronta(s) para importar${skip?` · <b>${skip}</b> de fora (já cadastradas, repetidas ou sem nome)`:''}. Desmarque quem não quiser.</div>
+   <p class="small" id="imp_sum"></p><div class="cti-tools"><button class="btn sm" data-action="mt-imp-all" data-v="1">Marcar todas</button> <button class="btn sm" data-action="mt-imp-all" data-v="0">Desmarcar todas</button></div>
+   <div class="cti-list" style="max-height:46vh;overflow:auto">${R.map(r=>`<label class="cti-row"><input type="checkbox" data-imp="${r.id}" ${r.sel?'checked':''} ${r.bad?'disabled':''}><span class="cti-nm"><b>${E(r.name||'(sem nome)')}</b><small>${E([r.phone?ctiFmt(r.phone):'sem telefone',r.kind+(r.role?' · '+r.role:''),r.birth?'nasc. '+brDate(r.birth):'',r.group||''].filter(Boolean).join(' · '))}${r.note?` · <i>${E(r.note)}</i>`:''}</small></span></label>`).join('')}</div></div>`,
+   `<button class="btn" data-action="mt-imp-back">Voltar</button><button class="btn primary" id="imp_go" data-action="mt-imp-go">Importar</button>`,true);
+  impCounts();
+}
+async function impGo(btn){
+  const pick=IMP.rows.filter(r=>r.sel);if(!pick.length)return;
+  busy(btn,true,'Importando…');
+  try{
+    const now=todayISO();
+    pick.forEach(r=>state.members.push({id:uid('m'),name:r.name,kind:r.kind,role:r.role||(r.kind==='Mensalista'?'Filho(a) da Casa':''),contribMode:'Nenhuma',feeValue:0,feeDueDay:null,paymentDueDate:'',paymentReason:'',paymentMethod:'',trackAttendance:r.kind==='Mensalista',giraNotify:true,phone:r.phone?ctiFmt(r.phone):'',whatsapp:r.phone||'',email:r.email||'',birth:r.birth||'',since:now,group:r.group||'',status:'Ativa',emergency:'',restricted:'',source:'planilha'}));
+    audit('Pessoas','Pessoas importadas da planilha',pick.length+' pessoa(s)');
+    await persist();closeModal();IMP.rows=[];
+    toast('✓ '+pick.length+' '+(pick.length===1?'pessoa importada.':'pessoas importadas.'));
+    if(route==='members'||route==='access')render();else go('members');
+  }catch(e){console.error(e);toast('⚠ Não foi possível importar. Tente de novo.')}finally{busy(btn,false)}
+}
+function impModel(){
+  const csv='Nome;WhatsApp;Nascimento;E-mail;Grupo;Tipo\nMaria da Silva;(11) 99999-1234;12/05/1985;maria@email.com;Oxum;Filho\nJoão Souza;11 98888-7777;03/11/1990;;Ogum;Cambono\nAna Lima;(11) 97777-6666;;;;Consulente\n';
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8'}));a.download='modelo-pessoas-meu-terreiro.csv';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500);
+}
+/* ---------- convidar vários de uma vez ---------- */
+const BV={hide:false};
+const bvKind=m=>memberKind(m)==='Consulente'?'consulente':'equipe';
+function bvHasAccount(m){return (AX.membros||[]).some(c=>{try{return c.status!=='removido'&&acharLocal(c)&&acharLocal(c).id===m.id}catch(e){return false}})}
+function bvList(){
+  return (state.members||[]).filter(m=>m.status!=='Inativa'&&m.status!=='Inativo'&&String(m.whatsapp||m.phone||'').replace(/\D/g,'').length>=8&&!bvHasAccount(m));
+}
+async function bvOpen(){
+  if(!AX.membros){try{await axLoad()}catch(e){}}
+  if(!codeOf('equipe')){toast('⚠ Código da casa ainda não carregou. Abra Acessos & Nuvem e tente de novo.');return}
+  bvPaint();
+}
+function bvPaint(){
+  const L=bvList(),sent=L.filter(m=>m.invitedAt).length,show=BV.hide?L.filter(m=>!m.invitedAt):L,next=L.find(m=>!m.invitedAt);
+  const noPhone=(state.members||[]).filter(m=>m.status!=='Inativa'&&m.status!=='Inativo'&&String(m.whatsapp||m.phone||'').replace(/\D/g,'').length<8&&!bvHasAccount(m)).length;
+  showModal('Convidar várias pessoas',`<div id="mtbv"><div class="notice">Toque em <b>Enviar</b> em cada pessoa: o WhatsApp abre com a mensagem pronta para ela. É um toque por pessoa, e o app lembra quem já recebeu.</div>
+   <div class="mtbv-top"><b>${sent} de ${L.length}</b> convidadas${next?`<button class="btn primary" data-action="mt-bv-next" data-id="${next.id}">Enviar para a próxima: ${E(next.name.split(' ')[0])}</button>`:'<span class="pill ok">Todas convidadas</span>'}</div>
+   <div class="mtbv-bar"><i style="width:${L.length?Math.round(sent*100/L.length):0}%"></i></div>
+   <label class="mtg-chk" style="display:flex;gap:8px;margin:8px 0"><input type="checkbox" id="bv_hide" ${BV.hide?'checked':''}> Esconder quem já foi convidado</label>
+   ${noPhone?`<p class="small muted">${noPhone} pessoa(s) sem WhatsApp no cadastro não aparecem aqui.</p>`:''}
+   <div class="mtbv-list">${show.map(m=>`<div class="mtbv-row"><div class="grow"><b>${E(m.name)}</b><small>${E(ctiFmt(ctiPhone(m.whatsapp||m.phone))||m.whatsapp||m.phone)} · ${bvKind(m)==='consulente'?'Consulente':'Filho/cambono'}${m.invitedAt?' · convidado em '+E(brDate(String(m.invitedAt).slice(0,10))):''}</small></div><button class="btn sm ${m.invitedAt?'':'primary'}" data-action="mt-bv-send" data-id="${m.id}">${m.invitedAt?'Enviar de novo':'Enviar'}</button></div>`).join('')||'<p class="small muted">Ninguém para convidar agora.</p>'}</div></div>`,
+   `<button class="btn primary" data-action="close-modal">Fechar</button>`,true);
+}
+async function bvSend(id){
+  const m=(state.members||[]).find(x=>x.id===id);if(!m)return;
+  const tp=bvKind(m);if(!codeOf(tp)){toast('⚠ Código da casa indisponível. Atualize e tente de novo.');return}
+  let n=String(m.whatsapp||m.phone||'').replace(/\D/g,'');if(n.length<=11)n='55'+n;
+  window.open('https://wa.me/'+n+'?text='+encodeURIComponent(inviteText(tp,m.name)),'_blank');
+  m.invitedAt=new Date().toISOString();
+  try{logAcao('convite_enviado',(tp==='consulente'?'Consulente · ':'Filho/cambono · ')+m.name)}catch(e){}
+  try{await persist(false)}catch(e){}
+  const sc=document.querySelector('#mtbv .mtbv-list');const y=sc?sc.scrollTop:0;bvPaint();const sc2=document.querySelector('#mtbv .mtbv-list');if(sc2)sc2.scrollTop=y;
+}
+/* ---------- passo a passo da implantação ---------- */
+function implCard(){
+  if(!MEM||MEM.papel!=='pai_mae')return '';
+  const mem=AX.membros||[],pend=mem.filter(m=>m.status==='pendente').length,act=mem.filter(m=>m.papel!=='pai_mae'&&m.status==='ativo').length;
+  const P=state.members||[],withPhone=P.filter(m=>String(m.whatsapp||m.phone||'').replace(/\D/g,'').length>=8),invited=withPhone.filter(m=>m.invitedAt||bvHasAccount(m)).length;
+  const perms=P.some(m=>m.perms&&m.perms.acessos&&Object.keys(m.perms.acessos).length)||mem.some(c=>c.acessos&&Object.values(c.acessos).some(Boolean));
+  const S6=[
+    {ok:true,t:'Casa conectada',d:'A conta online da casa está criada.'},
+    {ok:P.length>=3,t:'Cadastrar as pessoas',d:P.length+' pessoa(s) cadastrada(s). Importe a lista de uma vez.',b:[['Importar planilha','mt-imp-open'],['Importar contatos','cti-open']]},
+    {ok:withPhone.length>0&&invited>=withPhone.length,t:'Convidar filhos e cambonos',d:withPhone.length?invited+' de '+withPhone.length+' com WhatsApp já convidadas.':'Cadastre pessoas com WhatsApp para convidar.',b:[['Convidar várias de uma vez','mt-bv-open']]},
+    {ok:act>0&&pend===0,t:'Aprovar os cadastros',d:pend?pend+' aguardando a sua aprovação.':act?act+' pessoa(s) com acesso.':'Quando alguém se cadastrar, aprove aqui.',b:pend?[['Ver e aprovar','mt-impl-tab','pessoas']]:[]},
+    {ok:perms,t:'Liberar o que cada um pode fazer',d:'Escolha quem vê agenda, estoque, financeiro e mais.',b:[['Abrir permissões','mt-impl-tab','permissoes']]},
+    {ok:(state.events||[]).length>0,t:'Marcar a primeira gira',d:(state.events||[]).length?(state.events||[]).length+' compromisso(s) na agenda.':'Crie a gira e ela aparece para todos.',b:[['Abrir agenda','mt-impl-route','agenda']]}
+  ],done=S6.filter(x=>x.ok).length;
+  return `<details class="card mtx mtimpl" ${done<S6.length?'open':''}><summary><b>Implantação da casa</b> <span class="pill ${done===S6.length?'ok':'warn'}">${done} de ${S6.length}</span></summary><div class="mtbv-bar"><i style="width:${Math.round(done*100/S6.length)}%"></i></div>
+   ${S6.map((x,i)=>`<div class="mtimpl-row ${x.ok?'ok':''}"><span class="mtimpl-n">${x.ok?'✓':i+1}</span><div class="grow"><b>${E(x.t)}</b><small>${E(x.d)}</small>${(x.b||[]).length&&!x.ok||(x.b||[]).length&&i>0?`<div class="mtimpl-b">${x.b.map(b=>`<button type="button" class="btn sm ${x.ok?'':'primary'}" data-action="${b[1]}" ${b[2]?`data-v="${b[2]}"`:''}>${E(b[0])}</button>`).join(' ')}</div>`:''}</div></div>`).join('')}</details>`;
+}
+{
+  const _av=axView;
+  axView=function(){let h=_av.apply(this,arguments);try{const c=implCard();if(c)h=h.replace('<div class="mtx-tabs">',c+'<div class="mtx-tabs">')}catch(e){console.error(e)}return h};
+  const _rm=window.renderMembers;
+  if(typeof _rm==='function')window.renderMembers=function(){const h=_rm.apply(this,arguments);return h.replace('<div class="mt-quickbar">','<div class="mt-quickbar"><button class="btn" data-action="mt-imp-open">📄 Importar planilha</button>')};
+}
+document.addEventListener('change',e=>{
+  if(e.target&&e.target.id==='bv_hide'){BV.hide=e.target.checked;bvPaint()}
+  const i=e.target&&e.target.dataset&&e.target.dataset.imp;if(i){const r=IMP.rows.find(x=>x.id===i);if(r){r.sel=e.target.checked;impCounts()}}
+});
+document.addEventListener('click',async e=>{
+  const a=e.target.closest&&e.target.closest('[data-action^="mt-imp"],[data-action^="mt-bv-"]');if(!a)return;
+  e.preventDefault();e.stopImmediatePropagation();
+  const k=a.dataset.action;
+  if(k==='mt-imp-open')impOpen();else if(k==='mt-imp-check')impCheck();else if(k==='mt-imp-model')impModel();
+  else if(k==='mt-imp-back')impOpen();
+  else if(k==='mt-imp-all'){IMP.rows.forEach(r=>{if(!r.bad)r.sel=a.dataset.v==='1'});impList()}
+  else if(k==='mt-imp-go')await impGo(a);
+  else if(k==='mt-impl-tab'){AX.tab=a.dataset.v;axPaint()}
+  else if(k==='mt-impl-route'){if(typeof go==='function')go(a.dataset.v)}
+  else if(k==='mt-bv-open')await bvOpen();
+  else if(k==='mt-bv-send'||k==='mt-bv-next')await bvSend(a.dataset.id);
+},true);
+
+/* ======================================================================
+   V0.18.0.0 · BACKUP NA NUVEM (criptografado aqui, antes de sair do aparelho)
+   ====================================================================== */
+const BKC={busy:false,list:null,err:''};
+{const _pa=window.mtProtectedAction;if(typeof _pa==='function')window.mtProtectedAction=function(a){return String(a||'').startsWith('mt-bkc-')?false:_pa.apply(this,arguments)}}
+const bkcOn=()=>!!(configured()&&MEM&&MEM.papel==='pai_mae'&&S&&S.user&&!window.__MT_DEMO_MODE);
+const bkcDate=iso=>{try{return new Date(iso).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'})}catch(e){return iso}};
+async function bkcLoad(){
+  if(!bkcOn())return;
+  try{BKC.list=(await api.rpc('mt_backup_listar',{}))||[];BKC.err=''}
+  catch(e){BKC.list=null;BKC.err=/mt_backup_listar|function|404|PGRST202/i.test(String(e&&e.message))?'off':'erro'}
+  const h=document.getElementById('mtbkc');if(h)h.outerHTML=bkcHTML();
+}
+function bkcHTML(){
+  if(!bkcOn())return '<div id="mtbkc" hidden></div>';
+  let body;
+  if(BKC.err==='off')body='<p class="small muted">O backup na nuvem ainda não foi ativado para esta casa. Fale com o suporte do app.</p>';
+  else if(BKC.err)body='<p class="small muted">Não consegui consultar agora. <button class="btn sm" data-action="mt-bkc-load">Tentar de novo</button></p>';
+  else if(BKC.list===null)body='<p class="small muted">Consultando…</p>';
+  else body=(BKC.list.length?BKC.list.map(b=>`<div class="mtbkc-row"><div class="grow"><b>${E(bkcDate(b.criado_em))}</b><small>${E(b.por_nome||'')}${b.por_nome?' · ':''}${(b.tamanho/1024).toLocaleString('pt-BR',{maximumFractionDigits:0})} KB${b.resumo&&b.resumo.pessoas!=null?' · '+b.resumo.pessoas+' pessoas':''}</small></div><button class="btn sm" data-action="mt-bkc-restore" data-id="${E(b.id)}">Restaurar</button><button class="btn sm" data-action="mt-bkc-del" data-id="${E(b.id)}" aria-label="Apagar">🗑</button></div>`).join(''):'<p class="small muted">Nenhum backup na nuvem ainda.</p>');
+  return `<section class="card mtbkc" id="mtbkc"><h3>☁ Backup na nuvem</h3><p class="small">Guarda uma cópia <b>trancada com uma senha só sua</b>. Ninguém, nem o suporte, consegue abrir sem ela. Serve para recuperar tudo em outro celular: entre com a sua conta, abra esta tela e toque em Restaurar.</p><div class="mtbkc-act"><button class="btn primary" data-action="mt-bkc-new" ${BKC.err==='off'?'disabled':''}>Enviar backup agora</button></div>${body}</section>`;
+}
+function bkcOpenNew(){
+  showModal('Backup na nuvem',`<p>Crie uma <b>senha do backup</b> (mínimo 10 caracteres). Anote em lugar seguro: <b>sem ela não é possível recuperar</b>.</p><label>Senha do backup<input id="bkc_pw" type="password" autocomplete="new-password"></label><label>Repita a senha<input id="bkc_pw2" type="password" autocomplete="new-password"></label>`,`<button class="btn" data-action="close-modal">Cancelar</button><button class="btn primary" data-action="mt-bkc-send">Enviar</button>`);
+}
+async function bkcSend(){
+  if(BKC.busy)return;
+  const p=val('bkc_pw'),p2=val('bkc_pw2');
+  if(p.length<10||p.length>128){fieldBad('bkc_pw','Use pelo menos 10 caracteres.');return}
+  if(p!==p2){fieldBad('bkc_pw2','As senhas não são iguais.');return}
+  BKC.busy=true;const btn=document.querySelector('[data-action="mt-bkc-send"]');if(btn){btn.disabled=true;btn.textContent='Enviando…'}
+  try{
+    const data=bkClone(state);for(const k of ['passwordHash','pinHash'])data.settings[k]='';bkValidateState(data);
+    const pack={__casadeaxe:2,exportedAt:new Date().toISOString(),version:APP_VERSION,checksum:checksum(data),data,snapshots:[]};pack.sha256=await bkDigest(data,[]);await bkValidatePack(pack);
+    const salt=crypto.getRandomValues(new Uint8Array(16)),iv=crypto.getRandomValues(new Uint8Array(12)),key=await backupKey(p,salt),enc=await crypto.subtle.encrypt({name:'AES-GCM',iv},key,new TextEncoder().encode(JSON.stringify(pack)));
+    const raw=JSON.stringify({__casadeaxe_enc:1,exportedAt:pack.exportedAt,version:APP_VERSION,protection:'password',salt:bytesToB64(salt),iv:bytesToB64(iv),blob:bytesToB64(new Uint8Array(enc))});
+    const pessoas=(data.members||data.people||[]).length;
+    await api.rpc('mt_backup_salvar',{p_conteudo:raw,p_resumo:{pessoas,versao:APP_VERSION}});
+    closeModal();toast('✓ Backup guardado na nuvem');await bkcLoad();
+  }catch(e){
+    const m=String(e&&e.message||e);
+    if(/limite de 12 MB/.test(m))toast('⚠ O backup é grande demais para a nuvem. Faça o backup em arquivo.');else toast('⚠ Não foi possível enviar agora. Tente de novo.');
+    if(btn){btn.disabled=false;btn.textContent='Enviar'}
+  }finally{BKC.busy=false}
+}
+function bkcOpenRestore(id){
+  showModal('Restaurar da nuvem',`<div class="bk-warning" role="alert"><b>Os dados deste aparelho serão substituídos</b> pelos do backup. Antes disso o app guarda uma cópia de segurança.</div><label>Senha do backup<input id="bkc_rpw" type="password" autocomplete="current-password"></label>`,`<button class="btn" data-action="close-modal">Cancelar</button><button class="btn primary" data-action="mt-bkc-open" data-id="${E(id)}">Abrir backup</button>`);
+}
+async function bkcOpen(id){
+  if(BKC.busy)return;const pw=val('bkc_rpw');if(!pw){fieldBad('bkc_rpw','Digite a senha do backup.');return}
+  BKC.busy=true;
+  try{
+    const raw=await api.rpc('mt_backup_baixar',{p_id:id}),outer=JSON.parse(raw);
+    const salt=b64ToBytes(outer.salt),iv=b64ToBytes(outer.iv);
+    let pack;try{const key=await backupKey(pw,salt),plain=await crypto.subtle.decrypt({name:'AES-GCM',iv},key,b64ToBytes(outer.blob));pack=await bkValidatePack(JSON.parse(new TextDecoder().decode(plain)))}
+    catch(e){fieldBad('bkc_rpw','Senha incorreta.');return}
+    closeModal();bkPreview(pack,'restore','Backup da nuvem · '+bkcDate(outer.exportedAt));
+  }catch(e){toast('⚠ Não consegui baixar o backup agora.')}
+  finally{BKC.busy=false}
+}
+{
+  const _rp=window.renderProtection;
+  if(typeof _rp==='function')window.renderProtection=async function(){
+    const h=await _rp.apply(this,arguments);if(typeof h!=='string'||!bkcOn())return h;
+    if(BKC.list===null&&!BKC.err)setTimeout(bkcLoad,50);
+    const i=h.indexOf('class="bk-risk'),j=i<0?-1:h.indexOf('</section>',i);
+    return j<0?h+bkcHTML():h.slice(0,j+10)+bkcHTML()+h.slice(j+10);
+  };
+}
+document.addEventListener('click',async e=>{
+  const a=e.target.closest&&e.target.closest('[data-action^="mt-bkc-"]');if(!a)return;
+  e.preventDefault();e.stopImmediatePropagation();const k=a.dataset.action,id=a.dataset.id;
+  if(k==='mt-bkc-load'){BKC.err='';BKC.list=null;bkcLoad()}
+  else if(k==='mt-bkc-new')bkcOpenNew();
+  else if(k==='mt-bkc-send')await bkcSend();
+  else if(k==='mt-bkc-restore')bkcOpenRestore(id);
+  else if(k==='mt-bkc-open')await bkcOpen(id);
+  else if(k==='mt-bkc-del'){if(confirm('Apagar este backup da nuvem?')){try{await api.rpc('mt_backup_excluir',{p_id:id});await bkcLoad()}catch(x){toast('⚠ Não foi possível apagar.')}}}
+},true);
+
+window.mtCloud={BKC,IMP,BV,guiaStart,EQM,EQ,FIN,EST,REG,REV,QR,TKP,PT,AX,portalPaint,configured,api,session:()=>S,profile:()=>MEM,pubEvents,pubFees,syncAll};
 })();

@@ -305,3 +305,35 @@ label.mt-invalid{color:#c0392b}
 .mtg-body ul{margin:6px 0 6px 18px;padding:0}.mtg-body p{margin:8px 0}
 .mtg-btns{display:flex;flex-direction:column;gap:8px;margin-top:14px}.mtg-btns .btn{width:100%;justify-content:center}
 .mtg-bar{position:fixed;left:0;right:0;top:0;z-index:5900;background:#fff3cd;color:#5b3d00;padding:10px 14px;text-align:center;font-weight:600;display:flex;gap:10px;justify-content:center;align-items:center;box-shadow:0 2px 10px rgba(0,0,0,.25)}
+
+/* V0.14.0.0 · Conectar minha casa */
+.mtcn-card{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:linear-gradient(135deg,#fff7e0,#fdeec2);border:1px solid #e0b64e;border-radius:14px;padding:14px 16px;margin:0 0 14px}
+.mtcn-t{flex:1 1 260px;min-width:0}.mtcn-t b{display:block;font-size:1.05rem;color:#4a3300}.mtcn-t small{display:block;margin-top:3px;color:#6b4e0a;line-height:1.35}
+.mtcn-b .btn{white-space:nowrap}
+#mtcn .mtg-chk{display:flex;gap:8px;align-items:flex-start;font-size:.9rem}#mtcn .mtg-chk input{width:auto;margin-top:3px}
+#mtcn .full{grid-column:1/-1}
+
+/* V0.15.0.0 · primeira tela simples + plano único */
+.mtg-one{display:flex;flex-direction:column;gap:10px;margin:14px 0 8px}
+.mtg-big{width:100%;display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:left;padding:15px 16px;font-size:1.05rem;font-weight:800;line-height:1.2}
+.mtg-big small{font-weight:500;font-size:.82rem;opacity:.85;line-height:1.3}
+.mtg-big.alt{background:#fffaf0;color:#2b2218;border:1px solid #d9c9a4}
+details.mtcn-pro{margin:14px 0}details.mtcn-pro>summary{cursor:pointer;font-weight:700;padding:12px 14px;border:1px dashed #cdb98c;border-radius:12px;background:#fffaf0;list-style:none}
+details.mtcn-pro[open]>summary{margin-bottom:10px}
+
+/* V0.17.0.0 · implantação guiada */
+.mtbv-top{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:10px 0 6px}
+.mtbv-bar{height:8px;background:#eadfc6;border-radius:99px;overflow:hidden;margin:6px 0 10px}.mtbv-bar i{display:block;height:100%;background:#2f7a4a;border-radius:99px}
+.mtbv-list{max-height:44vh;overflow:auto;border:1px solid #e3dccb;border-radius:12px}
+.mtbv-row{display:flex;gap:10px;align-items:center;padding:9px 12px;border-bottom:1px solid #eee5d0}.mtbv-row:last-child{border-bottom:0}
+.mtbv-row small{display:block;color:#7a6a4a}.mtbv-row .btn{white-space:nowrap}
+.mtimpl>summary{cursor:pointer;list-style:none;font-size:1.05rem;display:flex;gap:8px;align-items:center}
+.mtimpl-row{display:flex;gap:12px;align-items:flex-start;padding:9px 0;border-top:1px solid #eee5d0}
+.mtimpl-n{flex:0 0 28px;height:28px;border-radius:50%;background:#efe3c3;color:#5b4300;display:flex;align-items:center;justify-content:center;font-weight:800}
+.mtimpl-row.ok .mtimpl-n{background:#2f7a4a;color:#fff}.mtimpl-row small{display:block;color:#7a6a4a;margin-top:2px}.mtimpl-b{margin-top:6px;display:flex;gap:6px;flex-wrap:wrap}
+#mtimp textarea{width:100%}
+
+/* V0.18 backup na nuvem */
+.mtbkc{margin:12px 0}.mtbkc-act{margin:8px 0}
+.mtbkc-row{display:flex;gap:8px;align-items:center;padding:8px 0;border-top:1px solid #0001}
+.mtbkc-row .grow{flex:1;min-width:0}.mtbkc-row small{display:block;opacity:.7}
