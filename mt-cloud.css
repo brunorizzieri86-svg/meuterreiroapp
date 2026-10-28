@@ -337,3 +337,13 @@ details.mtcn-pro[open]>summary{margin-bottom:10px}
 .mtbkc{margin:12px 0}.mtbkc-act{margin:8px 0}
 .mtbkc-row{display:flex;gap:8px;align-items:center;padding:8px 0;border-top:1px solid #0001}
 .mtbkc-row .grow{flex:1;min-width:0}.mtbkc-row small{display:block;opacity:.7}
+
+/* V0.19 opinião */
+.mtfb-card{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:linear-gradient(135deg,#eef7ef,#dcefdf);border:1px solid #b9d9bf;border-radius:14px;padding:14px;margin:12px 0;color:#1f3a25}
+.mtfb-t small{display:block;margin-top:2px;opacity:.85}.mtfb-b{display:flex;gap:8px;flex-wrap:wrap}
+.mtfb-bar{height:6px;background:#0002;border-radius:9px;overflow:hidden;margin:4px 0}.mtfb-bar i{display:block;height:100%;background:#2f7d4f}
+.mtfb-nps{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin:10px 0}
+.mtfb-n,.mtfb-o{border:2px solid #0003;background:transparent;color:inherit;border-radius:10px;padding:12px;font:inherit;cursor:pointer}
+.mtfb-o{display:block;width:100%;text-align:left;margin:8px 0}
+.mtfb-n.on,.mtfb-o.on{border-color:#2f7d4f;background:#2f7d4f22;font-weight:700}
+.mtfb-lg{display:flex;justify-content:space-between}

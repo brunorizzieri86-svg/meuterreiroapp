@@ -1115,6 +1115,7 @@ function portalBody(){
     const up=ev.filter(e=>e.data>=today()).slice(0,4),av=avActive(d.avisos).slice(0,5),nt=(d.notifs||[]).slice(0,5);
     return `<h2 class="ptl-h">Olá, ${E((MEM.nome||'').split(' ')[0])}</h2><p class="muted small">${E(MEM.casas?.nome||'')} · ${E(MODS[MEM.papel].label)} · <button type="button" class="mtg-link" data-mt="tour">Como usar o app</button></p>
       ${installCard()}
+      ${fbCard()}
       ${presCard()}
       ${lesCard()}
       ${nt.length?`<div class="ptl-sec"><h3>Para você</h3>${nt.map(n=>`<div class="ptl-notif ${n.lida_em?'':'new'}"><b>${E(n.titulo)}</b>${n.texto?`<div class="small">${nl(n.texto)}</div>`:''}<div class="small muted">${E(when(n.criada_em))}</div></div>`).join('')}</div>`:''}
@@ -3312,5 +3313,78 @@ document.addEventListener('click',async e=>{
   else if(k==='mt-bkc-del'){if(confirm('Apagar este backup da nuvem?')){try{await api.rpc('mt_backup_excluir',{p_id:id});await bkcLoad()}catch(x){toast('⚠ Não foi possível apagar.')}}}
 },true);
 
-window.mtCloud={BKC,IMP,BV,guiaStart,EQM,EQ,FIN,EST,REG,REV,QR,TKP,PT,AX,portalPaint,configured,api,session:()=>S,profile:()=>MEM,pubEvents,pubFees,syncAll};
+/* ======================================================================
+   V0.19.0.0 · SUA OPINIÃO (questionário dentro do app, responde uma vez só)
+   ====================================================================== */
+const FBID='v1';
+const FB={step:0,nps:null,ans:[],text:'',busy:false,checked:false};
+const FBQ={
+  pai_mae:[
+    {q:'Montar a sua casa no app foi...',o:['Fácil','Normal','Difícil']},
+    {q:'Conectar a casa e convidar as pessoas foi...',o:['Fácil','Normal','Difícil','Ainda não fiz']},
+    {q:'O que você mais usa?',o:['Agenda e giras','Financeiro','Cadastro de pessoas','Mensalidades','Outro']},
+    {q:'Sentiu falta de alguma coisa?',o:['Não','Sim, de uma coisa','Sim, de várias']},
+    {q:'Quanto acha justo pagar por mês?',o:['Até R$ 30','R$ 30 a R$ 60','R$ 60 a R$ 100','Mais de R$ 100','Não sei']}],
+  filho:[
+    {q:'Entrar no app foi...',o:['Fácil','Normal','Difícil']},
+    {q:'Você consegue ver agenda e mensalidade sem ajuda?',o:['Sim','Mais ou menos','Não']},
+    {q:'O que você mais usa?',o:['Agenda','Mensalidade','Orientações','Presença','Outro']},
+    {q:'O app é...',o:['Simples','Normal','Complicado']}],
+  cambono:null,
+  consulente:[
+    {q:'Entrar no app foi...',o:['Fácil','Normal','Difícil']},
+    {q:'Ficou claro o que você pode fazer aqui?',o:['Sim','Mais ou menos','Não']},
+    {q:'Ver e acompanhar seus atendimentos é...',o:['Fácil','Normal','Difícil','Ainda não usei']},
+    {q:'O app é...',o:['Simples','Normal','Complicado']}]
+};
+FBQ.cambono=FBQ.filho;
+const fbUid=()=>(S&&S.user&&S.user.id)||(MEM&&MEM.user_id)||'';
+const fbKey=k=>'mt_fb_'+k+'_'+FBID+'_'+fbUid();
+const fbDone=()=>ls.get(fbKey('done'))==='1';
+const fbSnoozed=()=>{const t=+ls.get(fbKey('snz'))||0;return Date.now()<t};
+const fbQs=()=>FBQ[(MEM&&MEM.papel)||'filho']||FBQ.filho;
+function fbShow(){return !!(configured()&&MEM&&S&&S.user&&!window.__MT_DEMO_MODE&&!fbDone()&&!fbSnoozed())}
+function fbCard(){
+  if(!fbShow())return '';
+  if(!FB.checked){FB.checked=true;api.rpc('mt_opiniao_respondida',{p_pesquisa:FBID}).then(r=>{if(r===true){ls.set(fbKey('done'),'1');document.querySelectorAll('.mtfb-card').forEach(x=>x.remove())}}).catch(()=>{})}
+  return `<div class="mtfb-card"><div class="mtfb-t"><b>Sua opinião vale muito 🙏</b><small>Conta pra gente como está sendo usar o app. Leva 2 minutos e você responde uma vez só.</small></div><div class="mtfb-b"><button class="btn primary" data-action="mt-fb-open">Responder</button><button class="btn sm" data-action="mt-fb-later">Agora não</button></div></div>`;
+}
+function fbOpen(){FB.step=0;FB.nps=null;FB.ans=[];FB.text='';fbPaint()}
+function fbPaint(){
+  const qs=fbQs(),n=qs.length+2,s=FB.step,bar=`<div class="mtfb-bar"><i style="width:${Math.round(s/n*100)}%"></i></div><div class="small muted">Pergunta ${s+1} de ${n}</div>`;
+  let body,next='Próxima';
+  if(s===0){body=`<h3>De 0 a 10, o quanto você recomendaria o MEU TERREIRO para outro terreiro?</h3><div class="mtfb-nps">${[0,1,2,3,4,5,6,7,8,9,10].map(i=>`<button type="button" class="mtfb-n ${FB.nps===i?'on':''}" data-action="mt-fb-nps" data-v="${i}">${i}</button>`).join('')}</div><div class="mtfb-lg small muted"><span>Nada provável</span><span>Muito provável</span></div>`}
+  else if(s<=qs.length){const q=qs[s-1];body=`<h3>${E(q.q)}</h3>${q.o.map((o,k)=>`<button type="button" class="mtfb-o ${FB.ans[s-1]===k?'on':''}" data-action="mt-fb-pick" data-k="${k}">${E(o)}</button>`).join('')}`}
+  else{body=`<h3>Quer deixar um recado? <span class="muted small">(opcional)</span></h3><textarea id="mtfb_tx" rows="4" maxlength="1500" placeholder="O que podemos melhorar? O que você mais gostou?">${E(FB.text)}</textarea>`;next='Enviar'}
+  const can=s===0?FB.nps!==null:s<=qs.length?FB.ans[s-1]!=null:true;
+  showModal('Sua opinião',bar+body,`<button class="btn" data-action="${s?'mt-fb-back':'close-modal'}">${s?'Voltar':'Fechar'}</button><button class="btn primary" data-action="mt-fb-next" ${can?'':'disabled'}>${next}</button>`);
+}
+async function fbSend(){
+  if(FB.busy)return;const tx=document.getElementById('mtfb_tx');if(tx)FB.text=tx.value.trim();
+  FB.busy=true;const qs=fbQs();
+  const resp=qs.map((q,k)=>({q:q.q,a:q.o[FB.ans[k]]||''}));
+  try{
+    await api.rpc('mt_opiniao_enviar',{p_pesquisa:FBID,p_nps:FB.nps,p_respostas:resp,p_texto:FB.text});
+    ls.set(fbKey('done'),'1');document.querySelectorAll('.mtfb-card').forEach(x=>x.remove());
+    showModal('Obrigado! 🙌','<p>Recebemos a sua opinião. Ela ajuda a deixar o app melhor para todo mundo.</p>','<button class="btn primary" data-action="close-modal">Fechar</button>');
+  }catch(e){toast('⚠ Não foi possível enviar agora. Tente de novo em instantes.')}
+  finally{FB.busy=false}
+}
+{const _pa=window.mtProtectedAction;if(typeof _pa==='function')window.mtProtectedAction=function(a){return String(a||'').startsWith('mt-fb-')?false:_pa.apply(this,arguments)}}
+{
+  const _t=window.mtTrialNoticeHTML;
+  if(typeof _t==='function')window.mtTrialNoticeHTML=function(){let h='';try{h=_t.apply(this,arguments)||''}catch(e){}return h+(route==='home'?fbCard():'')};
+}
+document.addEventListener('click',async e=>{
+  const a=e.target.closest&&e.target.closest('[data-action^="mt-fb-"]');if(!a)return;
+  e.preventDefault();e.stopImmediatePropagation();const k=a.dataset.action;
+  if(k==='mt-fb-open')fbOpen();
+  else if(k==='mt-fb-later'){const c=(+ls.get(fbKey('cnt'))||0)+1;ls.set(fbKey('cnt'),String(c));ls.set(fbKey('snz'),String(Date.now()+[3,14,30][Math.min(c-1,2)]*86400000));document.querySelectorAll('.mtfb-card').forEach(x=>x.remove())}
+  else if(k==='mt-fb-nps'){FB.nps=+a.dataset.v;fbPaint()}
+  else if(k==='mt-fb-pick'){FB.ans[FB.step-1]=+a.dataset.k;fbPaint()}
+  else if(k==='mt-fb-back'){const tx=document.getElementById('mtfb_tx');if(tx)FB.text=tx.value;FB.step=Math.max(0,FB.step-1);fbPaint()}
+  else if(k==='mt-fb-next'){if(FB.step>=fbQs().length+1)await fbSend();else{FB.step++;fbPaint()}}
+},true);
+
+window.mtCloud={FB,BKC,IMP,BV,guiaStart,EQM,EQ,FIN,EST,REG,REV,QR,TKP,PT,AX,portalPaint,configured,api,session:()=>S,profile:()=>MEM,pubEvents,pubFees,syncAll};
 })();
