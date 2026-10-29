@@ -221,7 +221,7 @@ function screen(name,mod,extra){
     },
     forgot:()=>`<span class="eyebrow">${E(m.label)}</span><h2>Recuperar senha</h2><p>Informe o e-mail do cadastro. Enviaremos um link para criar uma nova senha, <b>por e-mail</b> (não por WhatsApp). Confira também a caixa de spam.</p>
       <label>E-mail<input id="mt_email" type="email" autocomplete="username" inputmode="email" value="${E(ls.get('mt_last_email')||'')}"></label>${errBox()}
-      <button class="btn primary" data-mt="forgot" data-mt-primary>Enviar link</button>${back('login','← Voltar')}`,
+      <button class="btn primary" data-mt="forgot" data-mt-primary>Enviar link</button><p class="small muted" style="margin:10px 0 0">Não chegou? Veja a caixa de spam. Se continuar sem chegar, <button type="button" class="mtg-link" style="display:inline;padding:0" data-action="mt-ins-help">fale com o suporte pelo WhatsApp</button>.</p>${back('login','← Voltar')}`,
     newpass:()=>`<span class="eyebrow">Nova senha</span><h2>Crie sua nova senha</h2><p>Use pelo menos 6 caracteres.</p>${pwField('mt_pass','Nova senha','new-password')}${pwField('mt_pass2','Confirme a nova senha','new-password')}${errBox()}
       <button class="btn primary" data-mt="newpass" data-mt-primary>Salvar nova senha</button>`,
     sobre:()=>`<span class="eyebrow">Guia rápido</span><h2>Como funciona o MEU TERREIRO</h2>
@@ -1183,7 +1183,7 @@ function portalBody(){
    <div class="form-grid" style="margin-top:12px"><label class="full">Nome completo<input id="pf_nome" value="${E(m.nome)}"></label><label>WhatsApp<input id="pf_wa" inputmode="tel" value="${E(m.telefone||m.whatsapp||'')}"></label><label>Nascimento<input id="pf_nasc" type="date" value="${E(m.nascimento||'')}"></label><label class="full">Contato de emergência<input id="pf_em" value="${E(m.emergencia||'')}" placeholder="Nome · telefone"></label><label class="full">E-mail de acesso<input value="${E(S?.user?.email||m.email||'')}" disabled></label>${m.grupo?`<label class="full">Grupo<input value="${E(m.grupo)}" disabled></label>`:''}</div>
    <div id="mtPfMsg" class="small" style="min-height:18px;margin:8px 0"></div><button class="btn primary" data-mt="saveprofile">Salvar meus dados</button></div>
    <div class="ptl-sec"><h3>Senha</h3><div class="form-grid"><label>Nova senha<input id="pf_p1" type="password" autocomplete="new-password" minlength="6"></label><label>Confirmar<input id="pf_p2" type="password" autocomplete="new-password" minlength="6"></label></div><button class="btn" data-mt="pfpass" style="margin-top:10px">Alterar senha</button></div>
-   <div class="ptl-sec"><button class="btn danger" data-mt="logout">Sair</button></div>`;
+   <div class="ptl-sec"><button class="btn" data-action="mt-ins-help">💬 Falar com o suporte</button> <button class="btn danger" data-mt="logout">Sair</button></div>`;
 }
 function portalPaint(){
   const el=document.getElementById('mtPortal');if(!el)return;
@@ -1446,7 +1446,8 @@ renderMore=function(){
   const card=`<button class="hub-card" data-route="access"><div class="hub-icon">${ico('shield')}</div><div class="grow"><b>Acessos &amp; Nuvem${n}</b><small>Convites, pagamentos a validar, agenda e orientações.</small></div><span class="more-chevron">${ico('chevron')}</span></button>`;
   const card2=`<button class="hub-card" data-mt="switch"><div class="hub-icon">${ico('users')}</div><div class="grow"><b>Trocar de módulo</b><small>Entrar como Filho, Cambono ou Consulente, com outro cadastro.</small></div><span class="more-chevron">${ico('chevron')}</span></button>`;
   const i=h.indexOf('<button class="hub-card danger-hub"');
-  return i>0?h.slice(0,i)+card+card2+h.slice(i):h+card+card2;
+  const card3=supportCard(),card4=standalone()?'':`<button class="hub-card" data-action="mt-ins-guide"><div class="hub-icon">${ico('shield')}</div><div class="grow"><b>Instalar o app</b><small>Ícone na tela do celular ou do computador, passo a passo.</small></div><span class="more-chevron">${ico('chevron')}</span></button>`;
+  return i>0?h.slice(0,i)+card+card4+card3+card2+h.slice(i):h+card+card4+card3+card2;
 };
 const _go=go;
 go=function(r){ if(r==='access'){ if(!ROUTES.access)ROUTES.access=['Acessos & Nuvem','shield']; AX.membros=null; } return _go.apply(this,arguments); };
@@ -3257,25 +3258,37 @@ function bkcHTML(){
   return `<section class="card mtbkc" id="mtbkc"><h3>☁ Backup na nuvem</h3><p class="small">Guarda uma cópia <b>trancada com uma senha só sua</b>. Ninguém, nem o suporte, consegue abrir sem ela. Serve para recuperar tudo em outro celular: entre com a sua conta, abra esta tela e toque em Restaurar.</p><div class="mtbkc-act"><button class="btn primary" data-action="mt-bkc-new" ${BKC.err==='off'?'disabled':''}>Enviar backup agora</button></div>${body}</section>`;
 }
 function bkcOpenNew(){
-  showModal('Backup na nuvem',`<p>Crie uma <b>senha do backup</b> (mínimo 10 caracteres). Anote em lugar seguro: <b>sem ela não é possível recuperar</b>.</p><label>Senha do backup<input id="bkc_pw" type="password" autocomplete="new-password"></label><label>Repita a senha<input id="bkc_pw2" type="password" autocomplete="new-password"></label>`,`<button class="btn" data-action="close-modal">Cancelar</button><button class="btn primary" data-action="mt-bkc-send">Enviar</button>`);
+  showModal('Backup na nuvem',`<p>Crie uma <b>senha do backup</b> (mínimo 8 caracteres). Anote em lugar seguro: <b>sem ela não é possível recuperar</b>. Depois de enviar, você poderá mandá-la para o seu WhatsApp ou e-mail.</p><label class="mtins-chk"><input id="bkc_same" type="checkbox"><span><b>Usar a mesma senha da minha conta</b><small>Mais fácil de lembrar. Se você trocar a senha da conta depois, este backup continua com a senha antiga.</small></span></label><label id="bkc_l1"><span id="bkc_t1">Senha do backup</span><input id="bkc_pw" type="password" autocomplete="new-password"></label><label id="bkc_l2">Repita a senha<input id="bkc_pw2" type="password" autocomplete="new-password"></label><label class="mtins-chk"><input id="bkc_auto" type="checkbox" checked><span><b>Backup automático todo dia, neste aparelho</b><small>A senha fica guardada só neste aparelho, para o app enviar sozinho. Você pode desligar quando quiser.</small></span></label>`,`<button class="btn" data-action="close-modal">Cancelar</button><button class="btn primary" data-action="mt-bkc-send">Enviar</button>`);
 }
-async function bkcSend(){
-  if(BKC.busy)return;
-  const p=val('bkc_pw'),p2=val('bkc_pw2');
-  if(p.length<10||p.length>128){fieldBad('bkc_pw','Use pelo menos 10 caracteres.');return}
-  if(p!==p2){fieldBad('bkc_pw2','As senhas não são iguais.');return}
-  BKC.busy=true;const btn=document.querySelector('[data-action="mt-bkc-send"]');if(btn){btn.disabled=true;btn.textContent='Enviando…'}
-  try{
+async function bkcPush(p){
+  if(typeof bkcBlank==='function'&&bkcBlank()){const e=new Error('blank');e.code='blank';throw e}
     const data=bkClone(state);for(const k of ['passwordHash','pinHash'])data.settings[k]='';bkValidateState(data);
     const pack={__casadeaxe:2,exportedAt:new Date().toISOString(),version:APP_VERSION,checksum:checksum(data),data,snapshots:[]};pack.sha256=await bkDigest(data,[]);await bkValidatePack(pack);
     const salt=crypto.getRandomValues(new Uint8Array(16)),iv=crypto.getRandomValues(new Uint8Array(12)),key=await backupKey(p,salt),enc=await crypto.subtle.encrypt({name:'AES-GCM',iv},key,new TextEncoder().encode(JSON.stringify(pack)));
     const raw=JSON.stringify({__casadeaxe_enc:1,exportedAt:pack.exportedAt,version:APP_VERSION,protection:'password',salt:bytesToB64(salt),iv:bytesToB64(iv),blob:bytesToB64(new Uint8Array(enc))});
     const pessoas=(data.members||data.people||[]).length;
     await api.rpc('mt_backup_salvar',{p_conteudo:raw,p_resumo:{pessoas,versao:APP_VERSION}});
-    closeModal();toast('✓ Backup guardado na nuvem');await bkcLoad();
+  return true;
+}
+async function bkcSend(){
+  if(BKC.busy)return;
+  const same=!!document.getElementById('bkc_same')?.checked,p=val('bkc_pw'),p2=same?p:val('bkc_pw2');
+  if(same){
+    if(!p){fieldBad('bkc_pw','Digite a senha da sua conta.');return}
+    let r=null;try{r=await lockCheck(p)}catch(e){}
+    if(r===false){fieldBad('bkc_pw','Essa não é a senha da sua conta.');return}
+    if(r===null){try{await api.signIn(S.user.email,p)}catch(e){fieldBad('bkc_pw','Essa não é a senha da sua conta.');return}}
+  }
+  if(p.length<8||p.length>128){fieldBad('bkc_pw',same?'A senha da sua conta tem menos de 8 caracteres. Crie uma senha de backup própria.':'Use pelo menos 8 caracteres.');return}
+  if(p!==p2){fieldBad('bkc_pw2','As senhas não são iguais.');return}
+  BKC.busy=true;const btn=document.querySelector('[data-action="mt-bkc-send"]');if(btn){btn.disabled=true;btn.textContent='Enviando…'}
+  try{
+    await bkcPush(p);
+    if(document.getElementById('bkc_auto')?.checked){ls.set('mt_bk_auto',JSON.stringify({pw:p,at:Date.now()}))}
+    closeModal();toast('✓ Backup guardado na nuvem');await bkcLoad();BKC.lastPw=p;setTimeout(bkcKeepAsk,350);
   }catch(e){
     const m=String(e&&e.message||e);
-    if(/limite de 12 MB/.test(m))toast('⚠ O backup é grande demais para a nuvem. Faça o backup em arquivo.');else toast('⚠ Não foi possível enviar agora. Tente de novo.');
+    if(e&&e.code==='blank')toast('⚠ Este aparelho está vazio. Enviar agora apagaria o seu backup bom. Restaure primeiro.');else if(/limite de 12 MB/.test(m))toast('⚠ O backup é grande demais para a nuvem. Faça o backup em arquivo.');else toast('⚠ Não foi possível enviar agora. Tente de novo.');
     if(btn){btn.disabled=false;btn.textContent='Enviar'}
   }finally{BKC.busy=false}
 }
@@ -3470,5 +3483,181 @@ document.addEventListener('click',async e=>{
   else if(k==='mt-cq-see'){state.settings.cqNew=0;try{await persist()}catch(x){}membersKind='Consulente';go('members')}
 },true);
 
-window.mtCloud={CQ,cqPull,FB,BKC,IMP,BV,guiaStart,EQM,EQ,FIN,EST,REG,REV,QR,TKP,PT,AX,portalPaint,configured,api,session:()=>S,profile:()=>MEM,pubEvents,pubFees,syncAll};
+/* ======================================================================
+   V0.21.0.0 · INSTALAR NO iPHONE, MESMA CONTA EM QUALQUER NAVEGADOR, ONDE FICAM OS DADOS
+   ====================================================================== */
+{const _pa=window.mtProtectedAction;if(typeof _pa==='function')window.mtProtectedAction=function(a){return String(a||'').startsWith('mt-ins-')?false:_pa.apply(this,arguments)}}
+const PLAT=(()=>{
+  const ua=navigator.userAgent||'',ios=/iPad|iPhone|iPod/.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1),android=/Android/i.test(ua);
+  const chromeIos=/CriOS/.test(ua),other=/FxiOS|EdgiOS|OPiOS/.test(ua);
+  const inapp=/FBAN|FBAV|Instagram|WhatsApp|Snapchat|TikTok|musical_ly|Line\/|MicroMessenger|Telegram|; wv\)/i.test(ua)||(ios&&!/Safari\//.test(ua)&&!chromeIos&&!other);
+  const mac=/Macintosh/.test(ua)&&!ios,edge=/Edg\//.test(ua),chromeD=/Chrome\//.test(ua)&&!edge&&!/OPR\//.test(ua),safariD=mac&&/Safari\//.test(ua)&&!/Chrome\/|Chromium\/|Edg\//.test(ua),ff=/Firefox\//.test(ua);
+  return {ios,android,inapp,chromeIos,mac,edge,chromeD,safariD,ff,safari:ios&&!inapp&&!chromeIos&&!other,desktop:!ios&&!android};
+})();
+const SHARE_SVG='<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-5px"><path d="M12 15V3M8 7l4-4 4 4"/><path d="M6 11H5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-1"/></svg>';
+const PLUS_SVG='<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" style="vertical-align:-5px"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M12 8v8M8 12h8"/></svg>';
+const siteUrl=()=>location.origin+'/';
+function insStep(n,t,d){return `<div class="mtins-step"><span class="mtins-n">${n}</span><div><b>${t}</b>${d?`<small>${d}</small>`:''}</div></div>`}
+function insBody(){
+  let h='';
+  if(PLAT.inapp){
+    h+=`<div class="mtins-warn"><b>Você abriu o link dentro de outro aplicativo</b> (WhatsApp, Instagram…). Ali não dá para instalar e os dados não ficam guardados direito.</div>`;
+    h+=insStep(1,'Copie o endereço do app','Toque no botão abaixo.')+`<p><button class="btn primary" data-action="mt-ins-copy">Copiar endereço</button></p>`;
+    h+=insStep(2,PLAT.ios?'Abra o Safari':'Abra o Chrome','Cole o endereço na barra de cima e entre.');
+    h+=insStep(3,'Siga os passos de instalação','Eles aparecem de novo quando você abrir pelo '+(PLAT.ios?'Safari':'Chrome')+'.');
+    return h;
+  }
+  if(PLAT.ios){
+    h+=`<div class="mtins-soft">No iPhone a instalação é feita pelo menu <b>Compartilhar</b>. Leva menos de 1 minuto.</div>`;
+    h+=insStep(1,PLAT.chromeIos?'Toque em Compartilhar '+SHARE_SVG+' no canto de cima':'Toque em Compartilhar '+SHARE_SVG+' na barra de baixo',PLAT.safari?'É o quadradinho com uma seta para cima. Se não aparecer, toque nos 3 pontinhos (⋯).':'Se não achar, abra este endereço no Safari.');
+    h+=insStep(2,'Role e toque em “Adicionar à Tela de Início” '+PLUS_SVG,'Fica mais abaixo na lista. Deslize para cima se precisar.');
+    h+=insStep(3,'Toque em “Adicionar”','O ícone do MEU TERREIRO aparece na tela do celular.');
+    h+=insStep(4,'Abra pelo ícone e entre com o seu e-mail e senha','Na primeira vez o app instalado começa vazio. É normal: ao entrar com a sua conta, tudo que está na nuvem aparece.');
+    return h;
+  }
+  if(PLAT.android){
+    h+=insStep(1,'Toque nos 3 pontinhos (⋮) do Chrome','Canto de cima, à direita.');
+    h+=insStep(2,'Toque em “Instalar aplicativo”','Em alguns celulares aparece como “Adicionar à tela inicial”.');
+    h+=insStep(3,'Confirme e abra pelo ícone','Entre com o seu e-mail e senha: tudo que está na nuvem aparece.');
+    return h;
+  }
+  if(PLAT.safariD){
+    h+=`<div class="mtins-soft">No Safari do Mac a instalação é pelo menu de cima da tela (precisa do macOS Sonoma 14 ou mais novo).</div>`;
+    h+=insStep(1,'No menu de cima, clique em “Arquivo”','Fica na barra do topo do Mac, não dentro da página.');
+    h+=insStep(2,'Clique em “Adicionar ao Dock…”','Se a opção não aparecer, o Mac é antigo: use o Chrome.');
+    h+=insStep(3,'Confirme em “Adicionar”','O ícone do MEU TERREIRO aparece no Dock e em Aplicativos. Arraste para a mesa se quiser.');
+    return h;
+  }
+  if(PLAT.edge){
+    h+=insStep(1,'Clique nos 3 pontinhos (⋯) do Edge','Canto de cima, à direita.');
+    h+=insStep(2,'Aplicativos → “Instalar este site como um aplicativo”','Confirme em Instalar.');
+    return h;
+  }
+  if(PLAT.ff){
+    h+=`<div class="mtins-warn"><b>O Firefox não instala aplicativos no computador.</b> Abra este endereço no Chrome ou Edge (ou no Safari, se for Mac).</div>`;
+    return h;
+  }
+  h+=insStep(1,'Olhe a barra de endereço do Chrome','No canto direito do endereço aparece um ícone de instalar (uma telinha com uma seta para baixo).');
+  h+=insStep(2,'Clique nele e depois em “Instalar”','Se o ícone não aparecer: 3 pontinhos (⋮) → “Transmitir, salvar e compartilhar” → “Instalar MEU TERREIRO”.');
+  h+=insStep(3,PLAT.mac?'Abra pelo Dock ou por Aplicativos':'Abra pelo ícone na mesa ou no menu Iniciar','No Mac, o ícone fica em Aplicativos → Aplicativos do Chrome. Arraste para o Dock ou para a mesa.');
+  return h;
+}
+function mtInstallGuide(){
+  showModal('Instalar o MEU TERREIRO',`${insBody()}<div class="mtins-same"><b>Mesma conta em qualquer aparelho ou navegador</b><small>Entre sempre com o mesmo e-mail e senha. O que está na nuvem aparece igual em todos. Os dados que ficam só no aparelho do Pai/Mãe voltam pelo backup (Mais → Backup &amp; Proteção).</small></div>`,`<button class="btn" data-action="mt-ins-copy">Copiar endereço</button><button class="btn primary" data-action="close-modal">Entendi</button>`);
+}
+{
+  const _pi=window.promptInstall;
+  window.promptInstall=function(){
+    if(standalone()){toast('✓ O MEU TERREIRO já está instalado neste aparelho.');return}
+    let hasPrompt=false;try{hasPrompt=typeof _cdaInstallPrompt!=='undefined'&&!!_cdaInstallPrompt}catch(e){}
+    if(hasPrompt&&!PLAT.ios&&!PLAT.inapp&&typeof _pi==='function')return _pi.apply(this,arguments);
+    mtInstallGuide();
+  };
+}
+/* faixa na tela de entrada, onde o iPhone (e o navegador do WhatsApp) mais atrapalha */
+function insGateBand(){
+  const help='<button type="button" class="mtg-link center" data-action="mt-ins-help">💬 Precisa de ajuda? Falar com o suporte</button>';
+  if(standalone()||!(PLAT.ios||PLAT.inapp))return help;
+  return help+`<div class="mtins-gate"><b>${PLAT.inapp?'⚠ Aberto dentro de outro app':'📲 No iPhone'}</b><small>${PLAT.inapp?'Abra no '+(PLAT.ios?'Safari':'Chrome')+' para instalar e não perder o acesso.':'Instale na tela de início para abrir como aplicativo.'}</small><button type="button" class="btn sm" data-action="mt-ins-guide">Como instalar</button></div>`;
+}
+{const _panel=panel;panel=function(inner){return _panel(inner+insGateBand())}}
+/* iPhone: o Safari pode apagar dados de sites parados por dias; app instalado e backup protegem */
+function insAdminNote(){
+  if(!(PLAT.ios&&!standalone())||!MEM||MEM.papel!=='pai_mae')return;
+  const t=Number(ls.get('mt_ios_note')||0);if(t&&Date.now()-t<5*864e5)return;
+  ls.set('mt_ios_note',String(Date.now()));
+  showModal('No iPhone, instale o app',`<div class="mtins-warn"><b>O Safari pode apagar os dados de sites que ficam vários dias sem abrir.</b> Instalado na tela de início, o app fica bem mais protegido.</div>${insStep(1,'Instale o app na tela de início','Veja o passo a passo.')}${insStep(2,'Ligue o backup automático','Mais → Backup &amp; Proteção → Backup na nuvem.')}`,`<button class="btn" data-action="close-modal">Depois</button><button class="btn primary" data-action="mt-ins-guide">Como instalar</button>`);
+}
+/* aparelho/navegador novo: oferece trazer os dados de volta da nuvem */
+function bkcBlank(){const s=state||{};const n=k=>(s[k]||[]).length;return !(n('members')||n('transactions')||n('events')||n('stock')||n('spiritualWorks')||n('documents')||n('suppliers')||n('assets'))}
+async function bkcOffer(){
+  if(!bkcOn()||!bkcBlank())return;
+  try{if(sessionStorage.getItem('mt_offer_done'))return;sessionStorage.setItem('mt_offer_done','1')}catch(e){}
+  let list;try{list=(await api.rpc('mt_backup_listar',{}))||[]}catch(e){return}
+  if(list.length){
+    BKC.list=list;const b=list[0];
+    showModal('Seus dados estão na nuvem',`<div class="mtins-soft">Este aparelho (ou navegador) ainda está <b>vazio</b>, mas a sua casa tem um backup guardado na nuvem.</div><p>Backup de <b>${E(bkcDate(b.criado_em))}</b>${b.resumo&&b.resumo.pessoas!=null?' · '+b.resumo.pessoas+' pessoas':''}.</p><p class="small muted">Vai pedir a senha do backup. Se você não tem ela, toque em “Agora não” e use o app do outro aparelho.</p>`,`<button class="btn" data-action="close-modal">Agora não</button><button class="btn primary" data-action="mt-bkc-restore" data-id="${E(b.id)}">Restaurar meus dados</button>`);
+  }else{
+    showModal('Aparelho novo',`<div class="mtins-soft">Entrou com a sua conta, mas aqui ainda não há cadastros e a casa <b>não tem backup na nuvem</b>.</div><p>Se você já usava o app em outro aparelho:</p>${insStep(1,'Abra o app no aparelho antigo','Mais → Backup &amp; Proteção.')}${insStep(2,'Toque em “Enviar backup agora”','Crie a senha do backup.')}${insStep(3,'Volte aqui','Vamos oferecer a restauração sozinho.')}`,`<button class="btn primary" data-action="close-modal">Entendi</button>`);
+  }
+}
+/* backup automático diário (só se a pessoa ligou ao enviar o backup) */
+const autoCfg=()=>{try{return JSON.parse(ls.get('mt_bk_auto')||'null')}catch(e){return null}};
+async function bkcAuto(){
+  const c=autoCfg();if(!c||!c.pw||!bkcOn()||bkcBlank()||BKC.busy)return;
+  if(Date.now()-(c.at||0)<20*3600e3)return;
+  BKC.busy=true;
+  try{await bkcPush(c.pw);ls.set('mt_bk_auto',JSON.stringify({pw:c.pw,at:Date.now()}));if(route==='protection'){BKC.list=null;bkcLoad()}}
+  catch(e){}finally{BKC.busy=false}
+}
+/* Onde estão os seus dados */
+function whereCard(){
+  const on=AREAS.filter(a=>areaOn(a[0])).map(a=>a[1]),off=AREAS.filter(a=>!areaOn(a[0])).map(a=>a[1]);
+  const dev=(PLAT.ios?'iPhone/iPad':PLAT.android?'Android':'Computador')+' · '+(standalone()?'app instalado':'aberto no navegador');
+  const c=autoCfg(),conn=bkcOn();
+  return `<section class="card mtwhere"><h3>🗂 Onde estão os seus dados</h3>
+  ${conn?`<div class="mtw-b mtw-c"><b>☁ Na nuvem · aparece em qualquer aparelho ao entrar com a sua conta</b><p>Contas e acessos, agenda e giras publicadas, aniversários, estoque, mensalidades e comprovantes, avisos e orientações, cadastros pelo QR${on.length?', e as áreas compartilhadas: '+E(on.join(', ')):''}. Também o backup trancado com a sua senha.</p></div>`:`<div class="mtw-b mtw-c"><b>☁ Nuvem</b><p>Esta casa ainda não está conectada. Tudo fica só neste aparelho.</p></div>`}
+  <div class="mtw-b mtw-l"><b>📱 Só neste aparelho · ${E(dev)}</b><p>${conn?(off.length?E(off.join(', '))+' e tudo que você não compartilhou.':'Tudo que você não compartilhou.'):'Todos os cadastros, financeiro, estoque e documentos.'} Cada navegador tem o seu próprio espaço: Safari, Chrome e o app instalado <b>não enxergam os dados uns dos outros</b>.</p></div>
+  ${conn?`<div class="mtw-b mtw-k"><b>🔑 Levar tudo para outro aparelho ou navegador</b><p>1) Envie o backup abaixo. 2) No outro lugar, entre com a mesma conta. 3) Toque em Restaurar. ${c?'<br><b>Backup automático diário: ligado neste aparelho.</b> <button class="btn sm" data-action="mt-ins-autooff">Desligar</button>':'<br>Backup automático: desligado. Ligue ao enviar o backup.'}</p></div>`:''}
+  </section>`;
+}
+{
+  const _rp2=window.renderProtection;
+  if(typeof _rp2==='function')window.renderProtection=async function(){
+    const h=await _rp2.apply(this,arguments);if(typeof h!=='string')return h;
+    const i=h.indexOf('<section class="card mtbkc"');
+    if(i>=0)return h.slice(0,i)+whereCard()+h.slice(i);
+    const j=h.indexOf('<div class="grid g2">');return j>=0?h.slice(0,j)+whereCard()+h.slice(j):h+whereCard();
+  };
+}
+{
+  const _oa=openAdmin;
+  openAdmin=async function(){
+    const r=await _oa.apply(this,arguments);
+    try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
+    setTimeout(bkcOffer,1500);setTimeout(insAdminNote,4200);setTimeout(bkcAuto,8000);
+    return r;
+  };
+}
+try{const mr=document.getElementById('modalRoot');if(mr)new MutationObserver(()=>document.documentElement.classList.toggle('mt-lock',mr.children.length>0)).observe(mr,{childList:true})}catch(e){}
+document.addEventListener('click',async e=>{
+  const a=e.target.closest&&e.target.closest('[data-action^="mt-ins-"]');if(!a||/^mt-ins-(keep|help)/.test(a.dataset.action))return;
+  e.preventDefault();e.stopImmediatePropagation();const k=a.dataset.action;
+  if(k==='mt-ins-guide'){mtInstallGuide()}
+  else if(k==='mt-ins-copy'){try{await navigator.clipboard.writeText(siteUrl());toast('✓ Endereço copiado: '+siteUrl())}catch(x){window.prompt('Copie este endereço:',siteUrl())}}
+  else if(k==='mt-ins-autooff'){ls.del('mt_bk_auto');toast('Backup automático desligado.');if(route==='protection')render()}
+},true);
+
+
+
+/* Falar com o suporte (WhatsApp) */
+function supportUrl(){
+  const L=['Olá! Esta mensagem foi enviada pelo app MEU TERREIRO e preciso de ajuda.',''];
+  try{
+    const m=MEM||(S&&S.user&&typeof cachedProfile==='function'?cachedProfile():null);
+    if(m){L.push('Nome: '+(m.nome||''));L.push('Casa: '+((m.casas&&m.casas.nome)||''));L.push('Módulo: '+(MEMBERS_LABEL[m.papel]||m.papel||''));if(S&&S.user)L.push('E-mail: '+S.user.email)}
+    else{const em=val('mt_email')||ls.get('mt_last_email')||'';if(em)L.push('E-mail do cadastro: '+em)}
+    L.push('Versão do app: '+APP_VERSION);
+    L.push('Aparelho: '+(PLAT.ios?'iPhone/iPad':PLAT.android?'Android':'Computador')+(standalone()?' (app instalado)':' (navegador)'));
+  }catch(e){}
+  L.push('','Preciso de ajuda com: ');
+  return 'https://wa.me/'+String(MT_CONTATO.whatsapp).replace(/\D/g,'')+'?text='+encodeURIComponent(L.join('\n'));
+}
+const supportCard=()=>`<button class="hub-card" data-action="mt-ins-help"><div class="hub-icon">${ico('users')}</div><div class="grow"><b>Falar com o suporte</b><small>Chama a equipe do MEU TERREIRO no WhatsApp.</small></div><span class="more-chevron">${ico('chevron')}</span></button>`;
+/* guardar a senha do backup: WhatsApp / e-mail do próprio Pai/Mãe */
+function bkcKeepAsk(){
+  if(!BKC.lastPw)return;
+  showModal('Backup enviado ✓',`<div class="mtins-soft">Quer guardar a <b>senha do backup</b>? Sem ela não dá para recuperar os dados.</div><p class="small muted">Mande para você mesmo(a) e guarde a mensagem. Não repasse para outras pessoas.</p>`,`<button class="btn" data-action="mt-ins-keepno">Não precisa</button><button class="btn" data-action="mt-ins-keepmail">Enviar por e-mail</button><button class="btn primary" data-action="mt-ins-keepwa">Enviar por WhatsApp</button>`);
+}
+function bkcKeepText(){const casa=(state&&state.house&&state.house.name)||'minha casa';return 'MEU TERREIRO · Senha do backup da casa '+casa+':\n\n'+BKC.lastPw+'\n\nGuarde esta mensagem. Sem esta senha não é possível recuperar o backup.'}
+document.addEventListener('click',e=>{
+  const a=e.target.closest&&e.target.closest('[data-action^="mt-ins-keep"],[data-action="mt-ins-help"]');if(!a)return;
+  e.preventDefault();e.stopImmediatePropagation();const k=a.dataset.action;
+  if(k==='mt-ins-keepwa'){const n=digits((MEM&&MEM.whatsapp)||(state.house&&state.house.whatsapp)||'');window.open('https://wa.me/'+(n?(n.length<=11?'55'+n:n):'')+'?text='+encodeURIComponent(bkcKeepText()),'_blank');BKC.lastPw='';closeModal()}
+  else if(k==='mt-ins-keepmail'){location.href='mailto:'+encodeURIComponent((S&&S.user&&S.user.email)||'')+'?subject='+encodeURIComponent('Senha do backup · MEU TERREIRO')+'&body='+encodeURIComponent(bkcKeepText());BKC.lastPw='';closeModal()}
+  else if(k==='mt-ins-keepno'){BKC.lastPw='';closeModal()}
+  else if(k==='mt-ins-help'){window.open(supportUrl(),'_blank')}
+},true);
+document.addEventListener('change',e=>{if(e.target&&e.target.id==='bkc_same'){const on=e.target.checked,l2=document.getElementById('bkc_l2'),t1=document.getElementById('bkc_t1');if(l2)l2.style.display=on?'none':'';if(t1)t1.textContent=on?'Senha da sua conta':'Senha do backup'}});
+window.mtCloud={PLAT,bkcBlank,bkcOffer,bkcAuto,whereCard,mtInstallGuide,CQ,cqPull,FB,BKC,IMP,BV,guiaStart,EQM,EQ,FIN,EST,REG,REV,QR,TKP,PT,AX,portalPaint,configured,api,session:()=>S,profile:()=>MEM,pubEvents,pubFees,syncAll};
 })();
