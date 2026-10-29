@@ -396,3 +396,8 @@ html.mt-lock,html.mt-lock body{overflow:hidden}
 }
 @media(display-mode:standalone){html,body{overscroll-behavior-y:none}}
 @media(orientation:landscape){body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}}
+
+/* V0.21.5 ajuda nas janelas */
+.mthelp{background:rgba(70,130,220,.10);border-left:4px solid #4682dc;border-radius:12px;padding:10px 12px;margin:0 0 12px}
+.mthelp summary{cursor:pointer;font-weight:700;list-style:none}.mthelp summary::-webkit-details-marker{display:none}
+.mthelp-s{margin:8px 0 4px;font-weight:600}.mthelp ul{margin:6px 0 0;padding-left:18px;line-height:1.5}.mthelp li{margin:2px 0}

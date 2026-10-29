@@ -3659,5 +3659,81 @@ document.addEventListener('click',e=>{
   else if(k==='mt-ins-help'){window.open(supportUrl(),'_blank')}
 },true);
 document.addEventListener('change',e=>{if(e.target&&e.target.id==='bkc_same'){const on=e.target.checked,l2=document.getElementById('bkc_l2'),t1=document.getElementById('bkc_t1');if(l2)l2.style.display=on?'none':'';if(t1)t1.textContent=on?'Senha da sua conta':'Senha do backup'}});
+/* ======================================================================
+   V0.21.5.0 · CADA BOTÃO E CADA JANELA EXPLICAM O QUE FAZEM
+   ====================================================================== */
+const HELP=[
+ [/^Regras de frequência$/i,'Define a meta de presença da casa e quando o app avisa sobre faltas.','Escolher quanto cada filho precisa frequentar (ex.: 75%), depois de quantas faltas seguidas avisar, como a falta justificada conta e quais tipos de compromisso entram na conta.','Pessoas → Frequência → botão “Regras de Frequência”.','Perceber cedo quem está se afastando, para o Pai/Mãe conversar com a pessoa antes que ela deixe de vir.'],
+ [/^(Fazer chamada|Chamada ·)/i,'Registra quem veio, faltou, chegou atrasado ou justificou numa gira ou reunião.','Marcar a presença de cada pessoa no compromisso escolhido.','Botão “Fazer chamada” na Agenda Geral, em Pessoas e em Frequência.','Ter o histórico de presença de cada filho e os relatórios de frequência prontos, sem caderno.'],
+ [/^Quem participa/i,'Mostra a lista de quem foi convidado ou confirmou presença neste compromisso.','Ver e ajustar os participantes.','Agenda Geral → toque no compromisso.','Saber quantas pessoas esperar e quem avisar.'],
+ [/^Visão geral ·/i,'Resume o compromisso: data, horário, local, participantes e custos.','Reunir tudo do compromisso numa tela só.','Agenda Geral → compromisso.','Preparar a gira ou a festa sem esquecer nada.'],
+ [/^Novo cadastro$/i,'Cria a ficha de uma pessoa da casa (filho, cambono, consulente ou convidado).','Guardar nome, função, contato, aniversário e mensalidade.','Pessoas → botão “Novo cadastro”.','Ter todas as pessoas num lugar só. É daqui que saem aniversários, mensalidades, convites e frequência.'],
+ [/^Novo compromisso$/i,'Marca uma gira, reunião, festa, tarefa ou atendimento na agenda.','Escolher tipo, data, horário, local e responsável.','Agenda Geral → botão “Novo compromisso”.','Todos saberem os dias e horários. Com a casa conectada, a agenda aparece também no celular dos filhos.'],
+ [/^Avisar sobre/i,'Prepara uma mensagem de WhatsApp lembrando do compromisso.','Montar o texto e abrir o WhatsApp para você enviar.','Agenda Geral → compromisso → Avisar.','Diminuir esquecimentos e faltas.'],
+ [/^Agendar atendimento$/i,'Marca o atendimento de um consulente com data e horário.','Registrar quem, quando e com quem será o atendimento.','Pessoas ou Agenda Geral.','Organizar a fila de atendimentos e não perder nenhum.'],
+ [/^Novo lançamento$|^Editar lançamento$/i,'Registra dinheiro que entrou ou saiu da casa.','Informar tipo, valor, data, categoria e conta.','Financeiro → botão “Novo lançamento”.','Saber o saldo, quanto entrou e para onde o dinheiro foi.'],
+ [/^(Receber pagamento|Receber esta parcela)$/i,'Dá baixa em um valor a receber (mensalidade, parcela, contribuição).','Marcar como pago, com data e forma de pagamento.','Financeiro → Mensalidades ou A receber.','Manter em dia quem pagou e quem ainda deve.'],
+ [/^Lançar despesas da casa$/i,'Registra gastos do dia a dia (limpeza, velas, flores, contas).','Lançar vários itens de uma vez, com quantidade e valor.','Financeiro → aba Despesas.','Acompanhar para onde vai o dinheiro e ter relatório por categoria.'],
+ [/^Marcar despesa como paga$/i,'Confirma que uma despesa já foi paga.','Informar data e conta de onde saiu o dinheiro.','Financeiro → Contas a pagar.','Não esquecer contas e manter o saldo correto.'],
+ [/^Cancelar lançamento$/i,'Cancela um lançamento sem apagar o registro.','Guardar o motivo do cancelamento.','Financeiro → lançamento.','Corrigir erros mantendo o histórico para conferência.'],
+ [/^Quitar tudo de uma vez$/i,'Dá baixa em todas as parcelas em aberto de uma só vez.','Quitar o saldo restante.','Financeiro → A receber.','Fechar uma dívida rapidamente.'],
+ [/^Combinar entrada e parcelas$/i,'Divide um valor em entrada mais parcelas.','Definir entrada, número de parcelas e datas.','Financeiro → Novo lançamento.','Acertar valores maiores sem perder o controle de cada parcela.'],
+ [/^Transferir entre fundos$/i,'Passa dinheiro de um fundo ou conta para outro.','Escolher origem, destino e valor.','Financeiro → Fundos e contas.','Manter cada conta com o saldo certo (ex.: conta da casa e poupança).'],
+ [/^Trocar origem da despesa$/i,'Muda a despesa de “casa” para um trabalho espiritual (ou o contrário).','Reclassificar sem lançar de novo.','Financeiro → Despesas lançadas.','Os relatórios de cada área ficarem corretos.'],
+ [/^Conciliação/i,'Compara o que está no app com o extrato do banco.','Conferir se os valores batem.','Financeiro → Contas.','Descobrir diferenças e manter o caixa confiável.'],
+ [/^Registrar cobrança/i,'Cria o lançamento a receber de uma cobrança.','Registrar quanto e de quem cobrar.','Pessoas ou Financeiro.','Acompanhar quem ainda precisa pagar.'],
+ [/^Novo item$|^Editar item$/i,'Cadastra um material do estoque (velas, ervas, bebidas, limpeza).','Informar nome, quantidade, mínimo e unidade.','Estoque & Compras → botão “Novo item”.','Saber o que tem na casa e ser avisado quando está acabando.'],
+ [/^Movimentar/i,'Registra entrada ou saída de um item do estoque.','Informar quanto entrou ou saiu e o motivo.','Estoque & Compras → item → Movimentar.','Manter a quantidade certa e saber quem usou o quê.'],
+ [/^Lista de reposição$|^Lista de compras/i,'Lista o que está abaixo do mínimo e precisa ser comprado.','Gerar a lista pronta para levar ao mercado.','Estoque & Compras.','Comprar só o que falta, sem desperdício.'],
+ [/^Relatórios de estoque$/i,'Mostra relatórios do estoque.','Ver itens baixos, movimentações e valores.','Estoque & Compras → Relatórios.','Planejar compras e controlar gastos.'],
+ [/^(Pedidos de compra|Pedido )/i,'Organiza pedidos feitos a fornecedores.','Registrar o que foi pedido e receber quando chegar.','Estoque & Compras → Pedidos.','Saber o que já foi comprado e o que ainda vai chegar.'],
+ [/^(Nova cotação|Cotações|Comparativo de cotação)/i,'Compara preços de fornecedores para o mesmo item.','Lançar os preços e ver o melhor.','Estoque & Compras → Cotações.','Economizar nas compras da casa.'],
+ [/^(Orçamento ·|Conferir orçamento)/i,'Monta o orçamento de um evento ou compra.','Somar itens e valores esperados.','Festas & Eventos.','Planejar quanto a festa vai custar antes de gastar.'],
+ [/^(Novo fornecedor|Editar fornecedor)$/i,'Cadastra quem vende ou presta serviço para a casa.','Guardar nome, contato e categoria.','Fornecedores.','Achar rápido o telefone de quem você precisa.'],
+ [/^(Novo bem|Editar bem)$/i,'Cadastra um bem da casa (imagens, atabaques, mesas, equipamentos).','Informar nome, local, condição e valor.','Patrimônio.','Saber o que a casa possui e em que estado está.'],
+ [/^Novo documento$/i,'Guarda um documento (ata, recibo, comprovante).','Dar título, categoria e data.','Documentos.','Ter os papéis da casa organizados num lugar só.'],
+ [/^Novo trabalho espiritual$/i,'Registra um trabalho espiritual (gira, obrigação, trabalho especial).','Informar data, local, participantes e custos.','Trabalhos Espirituais.','Ter o histórico dos trabalhos e seus gastos.'],
+ [/^(Preparar mensagem|Programar mensagem|Conferir mensagem|Conferir lembrete)/i,'Prepara uma mensagem para a casa.','Escrever o texto e abrir o WhatsApp para enviar.','Comunicação.','Avisar todos sem repetir o mesmo texto várias vezes.'],
+ [/^Convidar (várias pessoas|consulentes)/i,'Prepara o convite para várias pessoas de uma vez.','Escolher quem convidar e abrir o WhatsApp.','Pessoas ou Agenda Geral.','Encher a gira e lembrar quem precisa vir.'],
+ [/^Importar (pessoas|contatos)/i,'Traz pessoas de uma planilha ou da agenda do celular.','Conferir a lista antes de cadastrar. Repetidos ficam de fora.','Pessoas → Importar.','Montar a casa em minutos, sem digitar um por um.'],
+ [/^Dados da Casa$/i,'Guarda o nome, endereço, responsável e contatos da casa.','Aparece em relatórios e PDFs.','Configurações → Dados da Casa.','Seus documentos saírem com o nome e os dados certos.'],
+ [/^Listas de apoio$/i,'Edita as listas usadas nos formulários (funções, categorias, tipos).','Acrescentar, renomear ou tirar opções.','Configurações → Listas de apoio.','Deixar o app com os nomes que a sua casa usa.'],
+ [/^Terminologia$/i,'Troca palavras do app pelas que a sua casa usa.','Ex.: “Filho” por “Médium”.','Configurações.','O app falar a língua da sua casa.'],
+ [/^Permissões ·/i,'Define o que esta pessoa pode ver e alterar no app.','Ligar ou desligar cada área, separando o que é só leitura.','Acessos & Nuvem → Pessoas.','Dar responsabilidade conforme a pessoa evolui, sem abrir o que é sensível, como o Financeiro.'],
+ [/^(QR Code de cadastro|Novos cadastros pelo QR)/i,'Mostra o QR Code que o consulente lê para se cadastrar sozinho.','Imprimir e deixar na casa. Os cadastros chegam para você.','Pessoas → QR Code.','Ter a lista de consulentes sem ficar digitando, para convidar para a gira.'],
+ [/^Backup na nuvem$/i,'Guarda uma cópia dos dados da casa trancada com uma senha só sua.','Enviar agora, ou deixar automático todo dia.','Mais → Backup & Proteção.','Recuperar tudo se trocar de celular ou perder o aparelho.'],
+ [/^(Backup completo|Backup protegido|Backup criptografado|Abrir backup protegido)/i,'Cria ou abre um arquivo de backup dos seus dados.','Baixar um arquivo para guardar fora do aparelho.','Mais → Backup & Proteção.','Não perder cadastros e financeiro.'],
+ [/^(Restaurar backup|Restaurar da nuvem|Conferir antes de restaurar)/i,'Traz de volta os dados de um backup.','Os dados atuais deste aparelho serão trocados. O app guarda uma cópia de segurança antes.','Mais → Backup & Proteção.','Recuperar tudo num celular novo.'],
+ [/^Definir PIN$/i,'Cria um código para abrir o app neste aparelho.','Pedir o PIN toda vez que o app for aberto.','Configurações → Segurança.','Proteger os dados da casa se alguém pegar seu celular.'],
+ [/^Proteção do armazenamento$/i,'Pede ao navegador para não apagar os dados do app sozinho.','Reduz o risco de limpeza automática.','Mais → Backup & Proteção.','Manter seus dados mais seguros neste aparelho.'],
+ [/^(Plano & Licença|Renovar o plano da casa|Conectar minha casa)/i,'Mostra e renova o plano do app, e conecta a casa online.','Ativar com o código recebido.','Mais → Plano & Assinatura ou Acessos & Nuvem.','Liberar a agenda e os acessos online para filhos, cambonos e consulentes.'],
+ [/^(Conectar Google Agenda|Google Agenda)$/i,'Liga a agenda do app ao Google Agenda.','Levar os compromissos para o seu calendário.','Agenda Geral.','Ver as giras junto com os outros compromissos do seu dia.'],
+ [/^Instalar o MEU TERREIRO$|^Instalar MEU TERREIRO$/i,'Ensina a instalar o app como ícone no celular ou computador.','Passo a passo para o seu aparelho.','Mais → Instalar o app.','Abrir o app com um toque, como qualquer outro aplicativo.'],
+ [/^Aniversariantes/i,'Lista os aniversariantes do mês.','Enviar parabéns pelo WhatsApp.','Pessoas → Aniversariantes.','Não esquecer de ninguém e fortalecer a família da casa.'],
+ [/^Busca global$/i,'Procura em tudo: pessoas, lançamentos, itens, documentos.','Digitar e abrir o resultado.','Lupa no topo.','Achar qualquer coisa em segundos.'],
+ [/^Pendências e alertas$/i,'Reúne o que precisa de atenção: contas, estoque baixo, aprovações.','Ver e resolver cada aviso.','Sino no topo.','Não deixar nada importante passar.']
+];
+const helpFind=t=>{t=String(t||'').trim();for(const h of HELP)if(h[0].test(t))return h;return null};
+function helpBand(t){
+  const h=helpFind(t);if(!h)return '';
+  return `<details class="mthelp" open><summary>ℹ Para que serve esta janela</summary><p class="mthelp-s">${E(h[1])}</p><ul><li><b>O que faz:</b> ${E(h[2])}</li><li><b>Onde fica:</b> ${E(h[3])}</li><li><b>Ajuda você a:</b> ${E(h[4])}</li></ul></details>`;
+}
+{
+  const _sm=showModal;
+  showModal=function(title,body,foot,wide){
+    let b=body;try{if(typeof body==='string'&&!body.includes('mthelp'))b=helpBand(title)+body}catch(e){}
+    return _sm.call(this,title,b,foot,wide);
+  };
+}
+/* explicação ao encostar o mouse / segurar o dedo nos botões */
+function helpTitles(root){
+  try{(root||document).querySelectorAll('button:not([title]),a.btn:not([title])').forEach(b=>{
+    const t=(b.textContent||'').replace(/[^\p{L}\p{N}\s&·ç]/gu,'').replace(/\s+/g,' ').trim();if(!t||t.length>40)return;
+    const h=helpFind(t);if(h)b.title=h[1]+' '+h[4];
+  })}catch(e){}
+}
+{let q=0;const run=()=>{q=0;helpTitles(document.getElementById('view')||document.body)};
+ try{new MutationObserver(()=>{if(!q)q=setTimeout(run,300)}).observe(document.body,{childList:true,subtree:true})}catch(e){}}
+
 window.mtCloud={PLAT,bkcBlank,bkcOffer,bkcAuto,whereCard,mtInstallGuide,CQ,cqPull,FB,BKC,IMP,BV,guiaStart,EQM,EQ,FIN,EST,REG,REV,QR,TKP,PT,AX,portalPaint,configured,api,session:()=>S,profile:()=>MEM,pubEvents,pubFees,syncAll};
 })();
