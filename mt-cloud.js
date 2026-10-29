@@ -3397,24 +3397,29 @@ async function cqCode(){
   CQ.code=String(c||'');return CQ.code;
 }
 const cqUrl=()=>location.origin+location.pathname.replace(/index\.html$/,'')+'cadastro.html?c='+encodeURIComponent(CQ.code);
-async function cqPull(){
-  if(!adminActive()||window.__MT_DEMO_MODE)return 0;
-  let rows;try{rows=await api.rpc('mt_cadastros_consulentes',{})}catch(e){if(e.code==='offline')throw e;return 0}
-  if(!Array.isArray(rows)||!rows.length)return 0;
-  const phones=new Set(state.members.map(m=>digits(m.whatsapp||m.phone||'')).filter(Boolean)),mails=new Set(state.members.map(m=>String(m.email||'').toLowerCase()).filter(Boolean));
-  const now=today(),done=[];let n=0;
+async function cqPull(info){
+  const out={n:0,dup:[],err:''};
+  if(!adminActive()||window.__MT_DEMO_MODE){out.err='A casa precisa estar conectada ao Terreiro Conectado, com a conta de Pai/Mãe.';return info?out:0}
+  let rows;try{rows=await api.rpc('mt_cadastros_consulentes',{})}catch(e){if(e.code==='offline')throw e;out.err=/mt_cadastros_consulentes|function|PGRST202|404/i.test(String(e&&e.message))?'O recurso ainda não foi ativado no servidor (falta rodar o SQL 18).':'Não foi possível consultar agora.';return info?out:0}
+  if(!Array.isArray(rows)||!rows.length)return info?out:0;
+  const byPhone=new Map(),byMail=new Map();state.members.forEach(m=>{const ph=digits(m.whatsapp||m.phone||''),ml=String(m.email||'').toLowerCase();if(ph)byPhone.set(ph,m);if(ml)byMail.set(ml,m)});
+  const now=today(),done=[];let changed=false;
   rows.forEach(r=>{
-    const ph=digits(r.telefone||''),ml=String(r.email||'').toLowerCase();
-    if(!((ph&&phones.has(ph))||(ml&&mails.has(ml)))){
-      state.members.push({id:uid('m'),name:r.nome,kind:'Consulente',role:'Consulente',contribMode:'Nenhuma',feeValue:0,feeDueDay:null,paymentDueDate:'',paymentReason:'',paymentMethod:'',trackAttendance:false,giraNotify:true,phone:ph?ctiFmt(ph):'',whatsapp:ph,email:r.email||'',birth:r.nascimento||'',since:now,group:'',status:'Ativa',emergency:'',restricted:'',source:'qr',qrId:r.id,notes:'Cadastro feito pelo QR Code em '+brDate(String(r.criado_em).slice(0,10))});
-      if(ph)phones.add(ph);if(ml)mails.add(ml);n++;
+    const ph=digits(r.telefone||''),ml=String(r.email||'').toLowerCase(),ex=(ph&&byPhone.get(ph))||(ml&&byMail.get(ml));
+    if(!ex){
+      const m={id:uid('m'),name:r.nome,kind:'Consulente',role:'Consulente',contribMode:'Nenhuma',feeValue:0,feeDueDay:null,paymentDueDate:'',paymentReason:'',paymentMethod:'',trackAttendance:false,giraNotify:true,phone:ph?ctiFmt(ph):'',whatsapp:ph,email:r.email||'',birth:r.nascimento||'',since:now,group:'',status:'Ativa',emergency:'',restricted:'',source:'qr',qrNew:true,qrId:r.id,notes:'Cadastro feito pelo QR Code em '+brDate(String(r.criado_em).slice(0,10))};
+      state.members.push(m);if(ph)byPhone.set(ph,m);if(ml)byMail.set(ml,m);out.n++;changed=true;
+    }else{
+      out.dup.push(ex.name);
+      if(!ex.email&&r.email){ex.email=r.email;changed=true}
+      if(!ex.birth&&r.nascimento){ex.birth=r.nascimento;changed=true}
     }
     done.push(r.id);
   });
-  if(n){state.settings.cqNew=(Number(state.settings.cqNew)||0)+n;await persist()}
+  if(changed)await persist();
   try{await api.rpc('mt_cadastros_consulentes_recebidos',{p_ids:done})}catch(e){}
-  if(n){toast('✓ '+n+' novo(s) consulente(s) cadastrado(s) pelo QR');try{render()}catch(e){}}
-  return n;
+  if(out.n){toast('✓ '+out.n+' novo(s) consulente(s) cadastrado(s) pelo QR');try{render()}catch(e){}}
+  return info?out:out.n;
 }
 async function cqOpen(){
   if(!adminActive()){toast('⚠ Conecte a casa ao Terreiro Conectado para usar o QR de cadastro.');return}
@@ -3424,6 +3429,14 @@ async function cqOpen(){
   showModal('QR Code de cadastro de consulentes',`<div class="mtcq"><div class="mtcq-img">${qrSvg(url,220)}</div><div class="grow"><p>Imprima e deixe na casa. O consulente lê com a câmera do celular e preenche <b>nome completo, e-mail, telefone e data de nascimento</b>. Sem criar conta nem senha.</p><p class="small muted">O cadastro chega sozinho em <b>Pessoas → Consulentes</b>, e daí você manda mensagem e convida para a gira como já faz.</p><div class="small mtq-url">${E(url)}</div></div></div>`,
   `<button class="btn" data-action="close-modal">Fechar</button><button class="btn" data-action="mt-cq-copy">Copiar link</button><button class="btn" data-action="mt-cq-check">Buscar cadastros agora</button><button class="btn primary" data-action="mt-cq-print">🖨️ Imprimir cartaz</button>`,true);
 }
+const cqNewList=()=>(state&&state.members||[]).filter(m=>m.qrNew);
+function cqNewOpen(){
+  const L=cqNewList();
+  const row=m=>{const ph=digits(m.whatsapp||m.phone||'');return `<div class="mtcq-row"><div class="grow"><b>${E(m.name)}</b><small>${E(ctiFmt(ph)||m.phone||'')}${m.email?' · '+E(m.email):''}${m.birth?' · nasc. '+E(brDate(m.birth)):''}</small><small class="muted">${E(m.notes||'')}</small></div><div class="mtcq-act">${ph?`<button class="btn sm primary" data-action="mt-cq-wa" data-id="${E(m.id)}">WhatsApp</button>`:''}<button class="btn sm" data-action="mt-cq-seen" data-id="${E(m.id)}">Já vi</button></div></div>`};
+  showModal('Novos cadastros pelo QR Code',L.length?`<p class="small muted">${L.length} consulente(s) se cadastraram pelo QR. Dê as boas-vindas e convide para a próxima gira.</p><div class="mtcq-list">${L.map(row).join('')}</div>`:'<p>Nenhum cadastro novo no momento. 🙏</p><p class="small muted">Os cadastros chegam sozinhos. Para buscar agora, use o botão abaixo.</p>',
+  `<button class="btn" data-action="close-modal">Fechar</button><button class="btn" data-action="mt-cq-check2">Buscar agora</button>${L.length?`<button class="btn" data-action="mt-cq-all">Marcar todos como vistos</button><button class="btn primary" data-action="mt-cq-gira">Convidar para a gira</button>`:''}`,true);
+}
+function cqNote(t,bad){const m=document.querySelector('#modalRoot .modal-body')||document.querySelector('#modalRoot');if(!m){toast(t);return}let el=document.getElementById('mtcq_note');if(!el){el=document.createElement('div');el.id='mtcq_note';el.style.cssText='margin-top:12px;padding:10px 12px;border-radius:10px;font-size:14px';m.appendChild(el)}el.style.background=bad?'#fde8e6':'#e7f3ea';el.style.color=bad?'#8a1c14':'#1f3a25';el.textContent=t}
 function cqPrint(){
   const h=(state&&state.house&&state.house.name)||'Terreiro',url=cqUrl();
   printDocument('Cartaz · Cadastro de consulentes',`<div style="text-align:center;padding:30px 20px"><div style="font-family:Georgia,serif;font-size:30px;font-weight:700;color:#24342d">${esc(h)}</div><div style="font-size:15px;letter-spacing:.14em;text-transform:uppercase;color:#a17c2f;margin:10px 0 26px">Cadastro de consulentes</div><div style="display:inline-block;padding:14px;border:3px solid #26483b;border-radius:18px;background:#fff">${qrSvg(url,420)}</div><div style="font-size:26px;font-weight:700;margin-top:26px;color:#24342d">Seja bem-vindo(a)!</div><div style="font-size:19px;margin-top:10px;color:#444">Aponte a câmera do celular para o QR Code<br>e faça o seu cadastro.</div><div style="font-size:14px;margin-top:22px;color:#777">Leva menos de 1 minuto · você não precisa criar senha</div></div>`);
@@ -3431,9 +3444,9 @@ function cqPrint(){
 {const _pa=window.mtProtectedAction;if(typeof _pa==='function')window.mtProtectedAction=function(a){return String(a||'').startsWith('mt-cq-')?false:_pa.apply(this,arguments)}}
 {
   const _rm=window.renderMembers;
-  if(typeof _rm==='function')window.renderMembers=function(){const h=_rm.apply(this,arguments);return adminActive()?h.replace('<div class="mt-quickbar">','<div class="mt-quickbar"><button class="btn" data-action="mt-cq-open">📱 QR de cadastro de consulentes</button>'):h};
+  if(typeof _rm==='function')window.renderMembers=function(){const h=_rm.apply(this,arguments);if(!adminActive())return h;const n=cqNewList().length;return h.replace('<div class="mt-quickbar">','<div class="mt-quickbar">'+(n?`<button class="btn gold" data-action="mt-cq-new">🆕 Novos cadastros pelo QR <span class="mt-n">${n}</span></button>`:'')+'<button class="btn" data-action="mt-cq-open">📱 QR de cadastro de consulentes</button>')};
   const _t=window.mtTrialNoticeHTML;
-  if(typeof _t==='function')window.mtTrialNoticeHTML=function(){let h='';try{h=_t.apply(this,arguments)||''}catch(e){}const n=Number(state&&state.settings&&state.settings.cqNew)||0;return h+(route==='home'&&n>0?`<div class="mtfb-card"><div class="mtfb-t"><b>${n} novo(s) consulente(s) pelo QR 🎉</b><small>Eles já estão em Pessoas → Consulentes. Mande uma mensagem ou convide para a próxima gira.</small></div><div class="mtfb-b"><button class="btn primary" data-action="mt-cq-see">Ver consulentes</button></div></div>`:'')};
+  if(typeof _t==='function')window.mtTrialNoticeHTML=function(){let h='';try{h=_t.apply(this,arguments)||''}catch(e){}const n=cqNewList().length;return h+(route==='home'&&n>0?`<div class="mtfb-card"><div class="mtfb-t"><b>${n} novo(s) consulente(s) pelo QR 🎉</b><small>Eles já estão em Pessoas → Consulentes. Dê as boas-vindas e convide para a próxima gira.</small></div><div class="mtfb-b"><button class="btn primary" data-action="mt-cq-new">Ver novos cadastros</button></div></div>`:'')};
 }
 document.addEventListener('click',async e=>{
   const a=e.target.closest&&e.target.closest('[data-action^="mt-cq-"]');if(!a)return;
@@ -3441,7 +3454,19 @@ document.addEventListener('click',async e=>{
   if(k==='mt-cq-open')await cqOpen();
   else if(k==='mt-cq-print')cqPrint();
   else if(k==='mt-cq-copy'){try{await navigator.clipboard.writeText(cqUrl());toast('✓ Link copiado')}catch(x){toast('Copie o link mostrado na tela')}}
-  else if(k==='mt-cq-check'){a.disabled=true;try{const n=await cqPull();toast(n?'✓ '+n+' novo(s) cadastro(s)':'Nenhum cadastro novo')}catch(x){toast('⚠ Sem conexão agora')}a.disabled=false}
+  else if(k==='mt-cq-check'){a.disabled=true;try{const r=await cqPull(true);
+    if(r.err)cqNote('⚠ '+r.err,true);
+    else if(r.n&&r.dup.length)cqNote('✓ '+r.n+' novo(s) cadastro(s). Também chegou(aram) cadastro(s) de quem já estava em Pessoas: '+r.dup.join(', ')+'. Completei e-mail e nascimento que faltavam.');
+    else if(r.n)cqNote('✓ '+r.n+' novo(s) cadastro(s) em Pessoas → Consulentes.');
+    else if(r.dup.length)cqNote('Chegou cadastro de quem já estava em Pessoas: '+r.dup.join(', ')+'. Não duplicou. Completei e-mail e nascimento que faltavam.');
+    else cqNote('Nenhum cadastro novo na nuvem agora.');
+  }catch(x){cqNote('⚠ Sem conexão agora.',true)}a.disabled=false}
+  else if(k==='mt-cq-new')cqNewOpen();
+  else if(k==='mt-cq-check2'){a.disabled=true;try{const r=await cqPull(true);if(r.err)toast('⚠ '+r.err)}catch(x){toast('⚠ Sem conexão agora')}a.disabled=false;cqNewOpen()}
+  else if(k==='mt-cq-wa'){const m=state.members.find(x=>x.id===a.dataset.id);if(m){const h=(state.house&&state.house.name)||'nosso terreiro',t='Olá, '+String(m.name).split(' ')[0]+'! Recebemos o seu cadastro no '+h+'. Seja muito bem-vindo(a)! Em breve avisaremos as próximas giras. 🙏';window.open('https://wa.me/'+waNum(m.whatsapp||m.phone)+'?text='+encodeURIComponent(t),'_blank')}}
+  else if(k==='mt-cq-seen'){const m=state.members.find(x=>x.id===a.dataset.id);if(m){delete m.qrNew;await persist();try{render()}catch(x){}cqNewOpen()}}
+  else if(k==='mt-cq-all'){cqNewList().forEach(m=>{delete m.qrNew});await persist();try{render()}catch(x){}closeModal();toast('✓ Marcados como vistos')}
+  else if(k==='mt-cq-gira'){closeModal();if(typeof mtGiraInviteModal==='function')mtGiraInviteModal()}
   else if(k==='mt-cq-see'){state.settings.cqNew=0;try{await persist()}catch(x){}membersKind='Consulente';go('members')}
 },true);
 
