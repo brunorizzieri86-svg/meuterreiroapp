@@ -352,3 +352,10 @@ details.mtcn-pro[open]>summary{margin-bottom:10px}
 .dx-bars{display:grid;gap:10px}.dx-bl{display:flex;justify-content:space-between;gap:8px}
 .dx-bt{height:8px;background:#0002;border-radius:9px;overflow:hidden;margin:4px 0}.dx-bt i{display:block;height:100%;background:#b8691c}
 .dx-bar small{opacity:.7}
+/* V0.19.2 abas: no computador quebram em linhas (nada fica cortado); no celular rolam com barra visível */
+html .tabs{scrollbar-width:thin;scrollbar-color:#b8691c66 transparent;padding-bottom:8px}
+html .tabs::-webkit-scrollbar{display:block;height:6px}
+html .tabs::-webkit-scrollbar-thumb{background:#b8691c88;border-radius:9px}
+html .tabs::-webkit-scrollbar-track{background:transparent}
+@media(min-width:761px){html .tabs{flex-wrap:wrap;overflow:visible}}
+@media(max-width:760px){html .tabs{-webkit-mask-image:linear-gradient(90deg,#000 88%,transparent);mask-image:linear-gradient(90deg,#000 88%,transparent)}}
