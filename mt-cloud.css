@@ -347,3 +347,8 @@ details.mtcn-pro[open]>summary{margin-bottom:10px}
 .mtfb-o{display:block;width:100%;text-align:left;margin:8px 0}
 .mtfb-n.on,.mtfb-o.on{border-color:#2f7d4f;background:#2f7d4f22;font-weight:700}
 .mtfb-lg{display:flex;justify-content:space-between}
+
+/* V0.19.1 despesas */
+.dx-bars{display:grid;gap:10px}.dx-bl{display:flex;justify-content:space-between;gap:8px}
+.dx-bt{height:8px;background:#0002;border-radius:9px;overflow:hidden;margin:4px 0}.dx-bt i{display:block;height:100%;background:#b8691c}
+.dx-bar small{opacity:.7}
