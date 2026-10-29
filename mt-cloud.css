@@ -359,3 +359,6 @@ html .tabs::-webkit-scrollbar-thumb{background:#b8691c88;border-radius:9px}
 html .tabs::-webkit-scrollbar-track{background:transparent}
 @media(min-width:761px){html .tabs{flex-wrap:wrap;overflow:visible}}
 @media(max-width:760px){html .tabs{-webkit-mask-image:linear-gradient(90deg,#000 88%,transparent);mask-image:linear-gradient(90deg,#000 88%,transparent)}}
+
+/* V0.20 QR consulentes */
+.mtcq{display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap}.mtcq-img{background:#fff;padding:8px;border-radius:12px}.mtcq .grow{flex:1;min-width:220px}

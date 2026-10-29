@@ -1,4 +1,4 @@
-const CACHE='meuterreiro-v19200';
+const CACHE='meuterreiro-v20000';
 const ASSETS=[
   './','./index.html','./manifest.json','./manual.html','./privacidade.html','./termos.html',
   './assets/logo-meu-terreiro.png',
@@ -20,7 +20,13 @@ self.addEventListener('fetch',e=>{
   if(e.request.method!=='GET')return;
   // Nunca guardar em cache chamadas a outros domínios (Supabase: login, agenda, avisos)
   if(new URL(e.request.url).origin!==self.location.origin)return;
-  const isNav=e.request.mode==='navigate'||new URL(e.request.url).pathname.endsWith('/index.html');
+  const path=new URL(e.request.url).pathname,isIndex=/\/(index\.html)?$/.test(path);
+  if(e.request.mode==='navigate'&&!isIndex){
+    // outras páginas (cadastro.html, questionario.html, manual…): sempre da rede; nunca mexem no cache do app
+    e.respondWith(fetch(e.request).catch(()=>caches.match(e.request)||caches.match('./index.html')));
+    return;
+  }
+  const isNav=e.request.mode==='navigate'||path.endsWith('/index.html');
   if(isNav){
     e.respondWith(
       fetch(e.request).then(r=>{

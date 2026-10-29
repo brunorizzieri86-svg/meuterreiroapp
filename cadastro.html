@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Cadastro de consulente</title>
+<style>
+:root{--bg:#fbf7f0;--card:#fff;--ink:#2b2118;--mut:#7a6a58;--pri:#b8691c;--ok:#2f7d4f;--bad:#b3261e;--line:#e6dccb}
+@media(prefers-color-scheme:dark){:root{--bg:#1b1611;--card:#262019;--ink:#f3ebdf;--mut:#b5a58f;--pri:#d08a3e;--line:#3a3025}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.45 system-ui,sans-serif}
+main{max-width:520px;margin:0 auto;padding:18px 16px 40px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px}
+h1{font-size:23px;margin:0 0 4px}.casa{color:var(--pri);font-weight:700;margin:0 0 10px}.mut{color:var(--mut);font-size:15px}
+label{display:block;margin-top:14px;font-weight:600;font-size:15px}
+input[type=text],input[type=email],input[type=tel],input[type=date]{width:100%;margin-top:6px;padding:14px;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--ink);font:inherit}
+input.bad{border-color:var(--bad)}.err{color:var(--bad);font-size:14px;margin-top:4px;min-height:0}
+.chk{display:flex;gap:10px;align-items:flex-start;margin-top:16px;font-weight:400;font-size:14px;color:var(--mut)}.chk input{margin-top:3px;width:20px;height:20px}
+button{width:100%;margin-top:18px;padding:16px;border:0;border-radius:12px;background:var(--pri);color:#fff;font:inherit;font-weight:700;cursor:pointer}button:disabled{opacity:.5}
+.hp{position:absolute;left:-9999px;opacity:0}.ok{text-align:center}.ok .big{font-size:52px}
+</style></head><body><main><div class="card" id="box"><p class="mut">Carregando…</p></div></main>
+<script>
+const SB={url:'https://cfoevmyjowehybsineto.supabase.co',key:'sb_publishable_-1iAS5qsHz7-CxbqPpRQdA_Zh-PZRKC'};
+const $=s=>document.querySelector(s),box=$('#box');
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const code=(new URLSearchParams(location.search).get('c')||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+async function rpc(n,a){
+  const r=await fetch(SB.url+'/rest/v1/rpc/'+n,{method:'POST',headers:{'apikey':SB.key,'Content-Type':'application/json'},body:JSON.stringify(a)});
+  const t=await r.text();let j=null;try{j=JSON.parse(t)}catch(e){}
+  if(!r.ok)throw new Error((j&&j.message)||'Não foi possível enviar agora.');return j;
+}
+function fmtTel(v){const d=v.replace(/\D/g,'').slice(0,11);if(d.length<=2)return d;if(d.length<=6)return '('+d.slice(0,2)+') '+d.slice(2);if(d.length<=10)return '('+d.slice(0,2)+') '+d.slice(2,6)+'-'+d.slice(6);return '('+d.slice(0,2)+') '+d.slice(2,7)+'-'+d.slice(7)}
+async function start(){
+  if(!code){box.innerHTML='<h1>Link inválido</h1><p class="mut">Leia o QR Code do terreiro novamente.</p>';return}
+  let casa='';try{casa=await rpc('mt_validar_codigo',{p_codigo:code,p_papel:'consulente'})}catch(e){}
+  if(!casa){box.innerHTML='<h1>QR Code não reconhecido</h1><p class="mut">Peça um QR Code atualizado ao terreiro.</p>';return}
+  box.innerHTML=`<h1>Seja bem-vindo(a) 🙏</h1><p class="casa">${esc(casa)}</p><p class="mut">Faça o seu cadastro. Leva menos de um minuto. Você não precisa criar senha.</p>
+  <form id="f" novalidate autocomplete="on">
+  <label>Nome completo<input type="text" id="nm" autocomplete="name" maxlength="120"></label><div class="err" id="e_nm"></div>
+  <label>E-mail<input type="email" id="em" autocomplete="email" maxlength="160" inputmode="email"></label><div class="err" id="e_em"></div>
+  <label>Telefone (WhatsApp)<input type="tel" id="tl" autocomplete="tel" inputmode="numeric" placeholder="(11) 99999-9999"></label><div class="err" id="e_tl"></div>
+  <label>Data de nascimento<input type="date" id="nc" autocomplete="bday"></label><div class="err" id="e_nc"></div>
+  <input class="hp" type="text" id="site" tabindex="-1" autocomplete="off" aria-hidden="true">
+  <label class="chk"><input type="checkbox" id="lg"><span>Autorizo o terreiro a guardar estes dados para me contatar (avisos, convites para giras e atendimentos). Posso pedir a retirada a qualquer momento.</span></label><div class="err" id="e_lg"></div>
+  <button type="submit" id="bt">Enviar cadastro</button></form>`;
+  $('#tl').addEventListener('input',e=>{e.target.value=fmtTel(e.target.value)});
+  $('#f').addEventListener('submit',send);
+}
+function bad(id,msg){const el=$('#'+id);if(el&&el.tagName==='INPUT')el.classList.add('bad');$('#e_'+id).textContent=msg;try{el.scrollIntoView({block:'center'})}catch(e){}return false}
+async function send(ev){
+  ev.preventDefault();document.querySelectorAll('.bad').forEach(x=>x.classList.remove('bad'));document.querySelectorAll('.err').forEach(x=>x.textContent='');
+  if($('#site').value)return;
+  const nome=$('#nm').value.trim().replace(/\s+/g,' '),em=$('#em').value.trim(),tl=$('#tl').value.replace(/\D/g,''),nc=$('#nc').value;
+  if(nome.length<5||!nome.includes(' '))return bad('nm','Escreva o nome completo.');
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em))return bad('em','Digite um e-mail válido.');
+  if(tl.length<10)return bad('tl','Digite o telefone com DDD.');
+  if(!nc||nc>new Date().toISOString().slice(0,10))return bad('nc','Informe a data de nascimento.');
+  if(!$('#lg').checked)return bad('lg','Marque a autorização para continuar.');
+  const b=$('#bt');b.disabled=true;b.textContent='Enviando…';
+  try{
+    const casa=await rpc('mt_cadastro_consulente',{p_codigo:code,p_nome:nome,p_email:em,p_telefone:tl,p_nascimento:nc});
+    box.innerHTML=`<div class="ok"><div class="big">✅</div><h1>Cadastro enviado!</h1><p class="mut">Obrigado, ${esc(nome.split(' ')[0])}. O ${esc(casa||'terreiro')} recebeu o seu cadastro e vai entrar em contato.</p></div>`;
+  }catch(e){b.disabled=false;b.textContent='Enviar cadastro';$('#e_lg').textContent=e.message}
+}
+start();
+</script></body></html>

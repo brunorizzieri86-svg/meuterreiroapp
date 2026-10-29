@@ -522,6 +522,7 @@ async function syncAll(force){
     try{await estPull()}catch(e){if(e.code==='offline')throw e}
     try{await finPull()}catch(e){if(e.code==='offline')throw e}
     try{await eqmPull()}catch(e){if(e.code==='offline')throw e}
+    try{await cqPull()}catch(e){if(e.code==='offline')throw e}
     const ev=pubEvents(),sigE=hash(JSON.stringify(ev));
     if(force||sigE!==ls.get(K.sigE)){
       if(ev.length||force||ls.get(K.pub)){await api.rpc('mt_publicar_agenda',{p_eventos:ev});ls.set(K.sigE,sigE);ls.set(K.pub,new Date().toISOString())}
@@ -3386,5 +3387,63 @@ document.addEventListener('click',async e=>{
   else if(k==='mt-fb-next'){if(FB.step>=fbQs().length+1)await fbSend();else{FB.step++;fbPaint()}}
 },true);
 
-window.mtCloud={FB,BKC,IMP,BV,guiaStart,EQM,EQ,FIN,EST,REG,REV,QR,TKP,PT,AX,portalPaint,configured,api,session:()=>S,profile:()=>MEM,pubEvents,pubFees,syncAll};
+/* ======================================================================
+   V0.20.0.0 · CADASTRO DE CONSULENTES POR QR CODE
+   ====================================================================== */
+const CQ={code:'',busy:false};
+async function cqCode(){
+  if(CQ.code)return CQ.code;
+  const c=codeOf('consulente')||await api.rpc('mt_codigo_da_casa',{p_tipo:'consulente'});
+  CQ.code=String(c||'');return CQ.code;
+}
+const cqUrl=()=>location.origin+location.pathname.replace(/index\.html$/,'')+'cadastro.html?c='+encodeURIComponent(CQ.code);
+async function cqPull(){
+  if(!adminActive()||window.__MT_DEMO_MODE)return 0;
+  let rows;try{rows=await api.rpc('mt_cadastros_consulentes',{})}catch(e){if(e.code==='offline')throw e;return 0}
+  if(!Array.isArray(rows)||!rows.length)return 0;
+  const phones=new Set(state.members.map(m=>digits(m.whatsapp||m.phone||'')).filter(Boolean)),mails=new Set(state.members.map(m=>String(m.email||'').toLowerCase()).filter(Boolean));
+  const now=today(),done=[];let n=0;
+  rows.forEach(r=>{
+    const ph=digits(r.telefone||''),ml=String(r.email||'').toLowerCase();
+    if(!((ph&&phones.has(ph))||(ml&&mails.has(ml)))){
+      state.members.push({id:uid('m'),name:r.nome,kind:'Consulente',role:'Consulente',contribMode:'Nenhuma',feeValue:0,feeDueDay:null,paymentDueDate:'',paymentReason:'',paymentMethod:'',trackAttendance:false,giraNotify:true,phone:ph?ctiFmt(ph):'',whatsapp:ph,email:r.email||'',birth:r.nascimento||'',since:now,group:'',status:'Ativa',emergency:'',restricted:'',source:'qr',qrId:r.id,notes:'Cadastro feito pelo QR Code em '+brDate(String(r.criado_em).slice(0,10))});
+      if(ph)phones.add(ph);if(ml)mails.add(ml);n++;
+    }
+    done.push(r.id);
+  });
+  if(n){state.settings.cqNew=(Number(state.settings.cqNew)||0)+n;await persist()}
+  try{await api.rpc('mt_cadastros_consulentes_recebidos',{p_ids:done})}catch(e){}
+  if(n){toast('✓ '+n+' novo(s) consulente(s) cadastrado(s) pelo QR');try{render()}catch(e){}}
+  return n;
+}
+async function cqOpen(){
+  if(!adminActive()){toast('⚠ Conecte a casa ao Terreiro Conectado para usar o QR de cadastro.');return}
+  showModal('QR Code de cadastro de consulentes','<p class="small muted">Carregando…</p>','<button class="btn" data-action="close-modal">Fechar</button>');
+  try{await cqCode()}catch(e){showModal('QR Code de cadastro','<p>Não foi possível carregar agora. Tente de novo em instantes.</p>','<button class="btn primary" data-action="close-modal">Fechar</button>');return}
+  const url=cqUrl();
+  showModal('QR Code de cadastro de consulentes',`<div class="mtcq"><div class="mtcq-img">${qrSvg(url,220)}</div><div class="grow"><p>Imprima e deixe na casa. O consulente lê com a câmera do celular e preenche <b>nome completo, e-mail, telefone e data de nascimento</b>. Sem criar conta nem senha.</p><p class="small muted">O cadastro chega sozinho em <b>Pessoas → Consulentes</b>, e daí você manda mensagem e convida para a gira como já faz.</p><div class="small mtq-url">${E(url)}</div></div></div>`,
+  `<button class="btn" data-action="close-modal">Fechar</button><button class="btn" data-action="mt-cq-copy">Copiar link</button><button class="btn" data-action="mt-cq-check">Buscar cadastros agora</button><button class="btn primary" data-action="mt-cq-print">🖨️ Imprimir cartaz</button>`,true);
+}
+function cqPrint(){
+  const h=(state&&state.house&&state.house.name)||'Terreiro',url=cqUrl();
+  printDocument('Cartaz · Cadastro de consulentes',`<div style="text-align:center;padding:30px 20px"><div style="font-family:Georgia,serif;font-size:30px;font-weight:700;color:#24342d">${esc(h)}</div><div style="font-size:15px;letter-spacing:.14em;text-transform:uppercase;color:#a17c2f;margin:10px 0 26px">Cadastro de consulentes</div><div style="display:inline-block;padding:14px;border:3px solid #26483b;border-radius:18px;background:#fff">${qrSvg(url,420)}</div><div style="font-size:26px;font-weight:700;margin-top:26px;color:#24342d">Seja bem-vindo(a)!</div><div style="font-size:19px;margin-top:10px;color:#444">Aponte a câmera do celular para o QR Code<br>e faça o seu cadastro.</div><div style="font-size:14px;margin-top:22px;color:#777">Leva menos de 1 minuto · você não precisa criar senha</div></div>`);
+}
+{const _pa=window.mtProtectedAction;if(typeof _pa==='function')window.mtProtectedAction=function(a){return String(a||'').startsWith('mt-cq-')?false:_pa.apply(this,arguments)}}
+{
+  const _rm=window.renderMembers;
+  if(typeof _rm==='function')window.renderMembers=function(){const h=_rm.apply(this,arguments);return adminActive()?h.replace('<div class="mt-quickbar">','<div class="mt-quickbar"><button class="btn" data-action="mt-cq-open">📱 QR de cadastro de consulentes</button>'):h};
+  const _t=window.mtTrialNoticeHTML;
+  if(typeof _t==='function')window.mtTrialNoticeHTML=function(){let h='';try{h=_t.apply(this,arguments)||''}catch(e){}const n=Number(state&&state.settings&&state.settings.cqNew)||0;return h+(route==='home'&&n>0?`<div class="mtfb-card"><div class="mtfb-t"><b>${n} novo(s) consulente(s) pelo QR 🎉</b><small>Eles já estão em Pessoas → Consulentes. Mande uma mensagem ou convide para a próxima gira.</small></div><div class="mtfb-b"><button class="btn primary" data-action="mt-cq-see">Ver consulentes</button></div></div>`:'')};
+}
+document.addEventListener('click',async e=>{
+  const a=e.target.closest&&e.target.closest('[data-action^="mt-cq-"]');if(!a)return;
+  e.preventDefault();e.stopImmediatePropagation();const k=a.dataset.action;
+  if(k==='mt-cq-open')await cqOpen();
+  else if(k==='mt-cq-print')cqPrint();
+  else if(k==='mt-cq-copy'){try{await navigator.clipboard.writeText(cqUrl());toast('✓ Link copiado')}catch(x){toast('Copie o link mostrado na tela')}}
+  else if(k==='mt-cq-check'){a.disabled=true;try{const n=await cqPull();toast(n?'✓ '+n+' novo(s) cadastro(s)':'Nenhum cadastro novo')}catch(x){toast('⚠ Sem conexão agora')}a.disabled=false}
+  else if(k==='mt-cq-see'){state.settings.cqNew=0;try{await persist()}catch(x){}membersKind='Consulente';go('members')}
+},true);
+
+window.mtCloud={CQ,cqPull,FB,BKC,IMP,BV,guiaStart,EQM,EQ,FIN,EST,REG,REV,QR,TKP,PT,AX,portalPaint,configured,api,session:()=>S,profile:()=>MEM,pubEvents,pubFees,syncAll};
 })();
