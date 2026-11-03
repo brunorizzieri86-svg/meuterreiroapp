@@ -3264,8 +3264,8 @@ async function bkcPush(p){
   if(typeof bkcBlank==='function'&&bkcBlank()){const e=new Error('blank');e.code='blank';throw e}
     const data=bkClone(state);for(const k of ['passwordHash','pinHash'])data.settings[k]='';bkValidateState(data);
     const pack={__casadeaxe:2,exportedAt:new Date().toISOString(),version:APP_VERSION,checksum:checksum(data),data,snapshots:[]};pack.sha256=await bkDigest(data,[]);await bkValidatePack(pack);
-    const salt=crypto.getRandomValues(new Uint8Array(16)),iv=crypto.getRandomValues(new Uint8Array(12)),key=await backupKey(p,salt),enc=await crypto.subtle.encrypt({name:'AES-GCM',iv},key,new TextEncoder().encode(JSON.stringify(pack)));
-    const raw=JSON.stringify({__casadeaxe_enc:1,exportedAt:pack.exportedAt,version:APP_VERSION,protection:'password',salt:bytesToB64(salt),iv:bytesToB64(iv),blob:bytesToB64(new Uint8Array(enc))});
+    const salt=crypto.getRandomValues(new Uint8Array(16)),iv=crypto.getRandomValues(new Uint8Array(12)),key=await backupKey(p,salt,600000),enc=await crypto.subtle.encrypt({name:'AES-GCM',iv},key,new TextEncoder().encode(JSON.stringify(pack)));
+    const raw=JSON.stringify({__casadeaxe_enc:1,exportedAt:pack.exportedAt,version:APP_VERSION,protection:'password',kdf:'PBKDF2-SHA256',iter:600000,salt:bytesToB64(salt),iv:bytesToB64(iv),blob:bytesToB64(new Uint8Array(enc))});
     const pessoas=(data.members||data.people||[]).length;
     await api.rpc('mt_backup_salvar',{p_conteudo:raw,p_resumo:{pessoas,versao:APP_VERSION}});
   return true;
@@ -3301,7 +3301,7 @@ async function bkcOpen(id){
   try{
     const raw=await api.rpc('mt_backup_baixar',{p_id:id}),outer=JSON.parse(raw);
     const salt=b64ToBytes(outer.salt),iv=b64ToBytes(outer.iv);
-    let pack;try{const key=await backupKey(pw,salt),plain=await crypto.subtle.decrypt({name:'AES-GCM',iv},key,b64ToBytes(outer.blob));pack=await bkValidatePack(JSON.parse(new TextDecoder().decode(plain)))}
+    let pack;try{const key=await backupKey(pw,salt,outer.iter),plain=await crypto.subtle.decrypt({name:'AES-GCM',iv},key,b64ToBytes(outer.blob));pack=await bkValidatePack(JSON.parse(new TextDecoder().decode(plain)))}
     catch(e){fieldBad('bkc_rpw','Senha incorreta.');return}
     closeModal();bkPreview(pack,'restore','Backup da nuvem · '+bkcDate(outer.exportedAt));
   }catch(e){toast('⚠ Não consegui baixar o backup agora.')}
@@ -3599,6 +3599,7 @@ function whereCard(){
   ${conn?`<div class="mtw-b mtw-c"><b>☁ Na nuvem · aparece em qualquer aparelho ao entrar com a sua conta</b><p>Contas e acessos, agenda e giras publicadas, aniversários, estoque, mensalidades e comprovantes, avisos e orientações, cadastros pelo QR${on.length?', e as áreas compartilhadas: '+E(on.join(', ')):''}. Também o backup trancado com a sua senha.</p></div>`:`<div class="mtw-b mtw-c"><b>☁ Nuvem</b><p>Esta casa ainda não está conectada. Tudo fica só neste aparelho.</p></div>`}
   <div class="mtw-b mtw-l"><b>📱 Só neste aparelho · ${E(dev)}</b><p>${conn?(off.length?E(off.join(', '))+' e tudo que você não compartilhou.':'Tudo que você não compartilhou.'):'Todos os cadastros, financeiro, estoque e documentos.'} Cada navegador tem o seu próprio espaço: Safari, Chrome e o app instalado <b>não enxergam os dados uns dos outros</b>.</p></div>
   ${conn?`<div class="mtw-b mtw-k"><b>🔑 Levar tudo para outro aparelho ou navegador</b><p>1) Envie o backup abaixo. 2) No outro lugar, entre com a mesma conta. 3) Toque em Restaurar. ${c?'<br><b>Backup automático diário: ligado neste aparelho.</b> <button class="btn sm" data-action="mt-ins-autooff">Desligar</button>':'<br>Backup automático: desligado. Ligue ao enviar o backup.'}</p></div>`:''}
+  <div class="mtw-b"><b>🔒 Proteção dos dados</b><p>Conexão sempre criptografada (HTTPS/TLS). Backups trancados com AES-256-GCM e chave derivada da sua senha com PBKDF2 de 600.000 voltas, no padrão atual recomendado. A senha nunca é guardada em texto aberto.</p></div>
   </section>`;
 }
 {
